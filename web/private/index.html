@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="tr" data-base="{{BASE}}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="theme-color" content="#7A232C" />
+    <title>Çalışma alanı · PDF Düzenle</title>
+    <link rel="icon" href="{{BASE}}/public/brand.svg" />
+    <link rel="stylesheet" href="{{BASE}}/public/style.css" />
+    <link rel="stylesheet" href="{{BASE}}/app/workspace.css" />
+    <script type="module" src="{{BASE}}/app/workspace.js"></script>
+  </head>
+  <body class="workspace">
+    <a href="#main-content" class="skip-link">İçeriğe geç</a>
+    <aside class="sidebar">
+      <a class="brand" href="{{BASE}}/app"
+        ><img
+          src="{{BASE}}/public/brand.svg"
+          width="40"
+          height="40"
+          alt=""
+        /><span>PDF Düzenle<small>BEYKOZ ÜNİVERSİTESİ</small></span></a
+      >
+      <div class="workspace-label">ÇALIŞMA ALANINIZ</div>
+      <nav aria-label="Araç kategorileri" id="category-nav"></nav>
+      <div class="sidebar-bottom">
+        <div class="local-note">
+          <span data-icon="shield"></span
+          ><strong>Dosyalarınız sizde kalır.</strong>
+          <p>
+            İşlemler tarayıcınızda gerçekleşir.<br />Güvenle çalışabilirsiniz.
+          </p>
+        </div>
+        <button class="side-link" id="help">
+          <span data-icon="help"></span>Yardım ve destek<span>↗</span></button
+        ><button class="side-link" id="about">
+          <span data-icon="info"></span>Uygulama hakkında
+        </button>
+        <div class="sidebar-footer">Beykoz Üniversitesi <span>2026</span></div>
+      </div>
+    </aside>
+    <div class="workspace-main">
+      <header class="workspace-header">
+        <button
+          id="menu-toggle"
+          class="icon-button mobile-only"
+          aria-label="Menüyü aç"
+          aria-expanded="false"
+        >
+          <span data-icon="menu"></span>
+        </button>
+        <div class="breadcrumb">
+          Çalışma alanı <span>/</span>
+          <strong id="breadcrumb-title">Tüm araçlar</strong>
+        </div>
+        <div class="header-right">
+          <span class="private-badge"
+            ><span class="status-dot"></span> Kurumsal erişim</span
+          ><button
+            id="user-menu-button"
+            class="avatar"
+            aria-label="Hesap menüsünü aç"
+            aria-expanded="false"
+          >
+            B
+          </button>
+          <div id="user-menu" class="user-menu" hidden>
+            <strong>Beykoz hesabınız</strong>
+            <p id="user-email"></p>
+            <form method="post" action="{{BASE}}/auth/logout">
+              <input type="hidden" name="csrf" id="csrf" /><button
+                type="submit"
+              >
+                Oturumu kapat <span>↗</span>
+              </button>
+            </form>
+            <small>Bu işlem yalnızca PDF Düzenle oturumunu kapatır.</small>
+          </div>
+        </div>
+      </header>
+      <main id="main-content">
+        <section id="dashboard">
+          <div class="page-heading">
+            <div>
+              <span class="eyebrow">KÜÇÜK İŞLERİ KOLAYLAŞTIRIN.</span>
+              <h1>Bugün neyi <em>düzenleyelim?</em></h1>
+              <p>
+                İhtiyacınız olan PDF araçları. Sade, hızlı, elinizin altında.
+              </p>
+            </div>
+            <span class="date-label" id="today"></span>
+          </div>
+          <div class="hero-banner">
+            <div class="hero-copy">
+              <span class="hero-eyebrow">BİRLİKTE DAHA DÜZENLİ</span>
+              <h2>Birçok dosya.<br />Tek bir bütün.</h2>
+              <p>
+                Ders notlarınızı, raporlarınızı ve formlarınızı<br />bir PDF’te
+                buluşturun.
+              </p>
+              <a class="hero-action" href="?tool=merge-pdf"
+                >PDF birleştir <span>↗</span></a
+              >
+            </div>
+            <div class="hero-art" aria-hidden="true">
+              <div class="hero-paper hp-back">
+                <span>NOTLAR</span><i></i><i></i><i></i>
+              </div>
+              <div class="hero-paper hp-front">
+                <span class="hero-file-tag">PDF</span
+                ><strong>Her şey<br />bir arada.</strong><i></i><i></i
+                ><small>BEYKOZ ÜNİVERSİTESİ</small>
+              </div>
+              <div class="hero-spark">✳</div>
+              <div class="hero-chip">✓ &nbsp; Daha az karmaşa.</div>
+            </div>
+          </div>
+          <section class="tools-section" aria-labelledby="tools-title">
+            <div class="tools-heading">
+              <div>
+                <h2 id="tools-title">
+                  Tüm araçlar <span id="tool-count"></span>
+                </h2>
+                <p id="category-description">
+                  İyi bir iş, doğru araçla başlar.
+                </p>
+              </div>
+              <label class="search"
+                ><span data-icon="search"></span
+                ><input
+                  id="search"
+                  type="search"
+                  placeholder="Bir araç arayın…"
+                  aria-label="PDF araçlarında ara"
+                  autocomplete="off"
+                /><kbd>/</kbd></label
+              >
+            </div>
+            <div
+              class="filter-pills"
+              id="filter-pills"
+              aria-label="Hızlı kategoriler"
+            ></div>
+            <div id="tool-grid" class="tool-grid"></div>
+            <div id="empty-state" class="empty-state" hidden>
+              <span data-icon="search"></span>
+              <h3 id="empty-title">Aradığınız aracı bulamadık.</h3>
+              <p id="empty-description">
+                Başka bir kelime deneyin veya tüm araçlara göz atın.
+              </p>
+              <button class="primary" id="clear-search">
+                Tüm araçları göster
+              </button>
+            </div>
+            <p
+              class="result-announcement"
+              id="result-announcement"
+              aria-live="polite"
+            ></p>
+          </section>
+          <div class="bottom-note">
+            <span data-icon="shield"></span
+            ><span
+              >Belgeleriniz sunucuya yüklenmez. Tüm PDF işlemleri cihazınızda
+              yapılır.</span
+            ><span class="note-end">Sizin işiniz. Sizin kontrolünüz.</span>
+          </div>
+        </section>
+        <section id="tool-view" hidden>
+          <div class="tool-toolbar">
+            <button class="back-button" id="back-to-tools">
+              <span data-icon="arrow-left"></span>Tüm araçlar</button
+            ><span class="tool-local"
+              ><span class="status-dot"></span> Cihazınızda işlenir</span
+            >
+          </div>
+          <div id="engine-loading" role="status">Araç hazırlanıyor…</div>
+          <iframe
+            id="engine-frame"
+            title="PDF düzenleme aracı"
+            allow="clipboard-write"
+            referrerpolicy="same-origin"
+          ></iframe>
+          <p class="engine-help">
+            İşiniz bittiğinde oluşturulan dosyayı cihazınıza indirin. Araçtan
+            ayrıldığınızda seçilen belgeler temizlenir.
+          </p>
+        </section>
+      </main>
+      <footer class="workspace-footer">
+        <span>© <span id="year">2026</span> Beykoz Üniversitesi</span
+        ><span
+          >PDF Düzenle <span class="footer-dot">·</span> Daha az uğraş, daha çok
+          odak.</span
+        >
+      </footer>
+    </div>
+    <dialog id="info-dialog">
+      <button class="dialog-close" aria-label="Kapat">×</button>
+      <div id="dialog-content"></div>
+      <button class="primary dialog-ok">Anladım</button>
+    </dialog>
+    <div id="toast" role="status" hidden></div>
+  </body>
+</html>

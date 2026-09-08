@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="tr" data-base="{{BASE}}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="theme-color" content="#7A232C" />
+    <title>PDF Düzenle · Beykoz Üniversitesi</title>
+    <link rel="icon" href="{{BASE}}/public/brand.svg" />
+    <link rel="stylesheet" href="{{BASE}}/public/style.css" />
+    <script src="{{BASE}}/public/login.js" defer></script>
+  </head>
+  <body class="login-page">
+    <header class="landing-header">
+      <a class="brand" href="{{BASE}}/"
+        ><img
+          src="{{BASE}}/public/brand.svg"
+          width="44"
+          height="44"
+          alt=""
+        /><span>PDF Düzenle<small>BEYKOZ ÜNİVERSİTESİ</small></span></a
+      ><span class="header-note"
+        ><span class="status-dot"></span> Üniversiteye özel çalışma alanı</span
+      >
+    </header>
+    <main class="landing-main">
+      <section class="intro">
+        <span class="eyebrow">DAHA AZ UĞRAŞ. DAHA ÇOK ODAK.</span>
+        <h1>Belgeleriniz için<br />yeni bir <em>sayfa.</em></h1>
+        <p class="intro-description">
+          Birleştirin, düzenleyin, dönüştürün.<br />PDF işleriniz, Beykoz’a özel
+          tek bir yerde.
+        </p>
+        <div class="paper-scene" aria-hidden="true">
+          <div class="scene-halo"></div>
+          <div class="paper paper-back">
+            <span class="paper-label">DERS NOTLARI</span>
+            <div class="paper-line"></div>
+            <div class="paper-line short"></div>
+            <div class="paper-chart"><i></i><i></i><i></i><i></i></div>
+          </div>
+          <div class="paper paper-front">
+            <div class="paper-top">
+              <span class="mini-file">PDF</span
+              ><span class="paper-dots">•••</span>
+            </div>
+            <div class="paper-title">Her şey<br />yerli yerinde.</div>
+            <div class="paper-line"></div>
+            <div class="paper-line"></div>
+            <div class="paper-line short"></div>
+            <div class="paper-bottom">
+              <span>BEYKOZ ÜNİVERSİTESİ</span><span>01</span>
+            </div>
+          </div>
+          <div class="float-chip chip-merge"><span>↗</span> Birleştir</div>
+          <div class="float-chip chip-done"><span>✓</span> İşte bu kadar.</div>
+          <div class="scene-caption">Düşüncenize alan açın.</div>
+        </div>
+        <div class="intro-features">
+          <span><span class="feature-symbol">⌘</span> Kurulum gerektirmez</span
+          ><span
+            ><span class="feature-symbol">◈</span> Dosyalarınız cihazınızda
+            kalır</span
+          >
+        </div>
+      </section>
+      <section class="signin-area" aria-labelledby="welcome">
+        <div class="signin-card">
+          <div class="welcome-icon">
+            <img
+              src="{{BASE}}/public/brand.svg"
+              width="48"
+              height="48"
+              alt=""
+            />
+          </div>
+          <span class="eyebrow">SİZE ÖZEL, SİZİN İÇİN.</span>
+          <h2 id="welcome">Hoş geldiniz.</h2>
+          <p>
+            Belgelerinize odaklanın.<br />Geri kalanını birlikte
+            kolaylaştıralım.
+          </p>
+          <a class="google-button" href="{{BASE}}/auth/saml/login"
+            ><svg viewBox="0 0 48 48" aria-hidden="true">
+              <path
+                fill="#4285F4"
+                d="M43.6 24.5c0-1.4-.1-2.7-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5.2h6.7c3.9-3.6 6-8.8 6-15.1Z"
+              />
+              <path
+                fill="#34A853"
+                d="M24 44c5.4 0 10-1.8 13.6-4.9l-6.7-5.2c-1.8 1.2-4.1 1.9-6.9 1.9-5.2 0-9.6-3.5-11.2-8.2H6v5.4A20 20 0 0 0 24 44Z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M12.8 27.6a12 12 0 0 1 0-7.2V15H6a20 20 0 0 0 0 18l6.8-5.4Z"
+              />
+              <path
+                fill="#EA4335"
+                d="M24 12.2c3 0 5.6 1 7.6 3l5.8-5.8A19.3 19.3 0 0 0 24 4 20 20 0 0 0 6 15l6.8 5.4A11.8 11.8 0 0 1 24 12.2Z"
+              /></svg
+            >Google Workspace ile giriş yap<span aria-hidden="true">↗</span></a
+          >
+          <div id="login-message" class="message" role="status" hidden></div>
+          <div class="email-note">
+            <span class="tiny-lock" aria-hidden="true">⌑</span> Yalnızca
+            <strong>@beykoz.edu.tr</strong> hesaplarıyla
+          </div>
+          <div class="signin-divider"></div>
+          <div class="privacy-note">
+            <span class="shield" aria-hidden="true">✓</span>
+            <div>
+              <strong>Belgeleriniz, sizin kontrolünüzde.</strong>
+              <p>
+                PDF işlemleri tarayıcınızda gerçekleşir.<br />Dosyalarınız
+                sunucuya yüklenmez.
+              </p>
+            </div>
+          </div>
+        </div>
+        <p class="signin-help">
+          Giriş yaparken sorun mu yaşıyorsunuz?
+          <button class="text-button" id="help-button">
+            Yardım alın <span aria-hidden="true">↗</span>
+          </button>
+        </p>
+      </section>
+    </main>
+    <footer class="landing-footer">
+      <span>© <span id="year">2026</span> Beykoz Üniversitesi</span
+      ><span>Biraz daha kolay. Biraz daha düzenli.</span
+      ><button class="text-button" id="privacy-button">
+        Gizlilik ve kullanım
+      </button>
+    </footer>
+    <dialog id="info-dialog">
+      <button class="dialog-close" aria-label="Kapat">×</button>
+      <div id="dialog-content"></div>
+      <button class="primary dialog-ok">Anladım</button>
+    </dialog>
+  </body>
+</html>

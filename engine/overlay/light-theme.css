@@ -1,0 +1,231 @@
+/*
+ * Ulakbim corporate light theme overlay for BentoPDF.
+ *
+ * Strategy: don't touch any source HTML. Instead, override BentoPDF's hardcoded
+ * dark Tailwind utility classes when `<html class="theme-light">` is set.
+ * A tiny inline script in <head> applies that class before paint based on the
+ * user's preference (localStorage / OS prefers-color-scheme), so there's no
+ * flash of wrong-theme content.
+ *
+ * !important is unavoidable here — Tailwind's utility classes have low
+ * specificity but they appear inline on elements and we need to win.
+ */
+
+:root {
+    /* Ulakbim/TÜBİTAK-adjacent palette. Tweak in one place. */
+    --ulak-blue:        #005CA9;
+    --ulak-blue-dark:   #004a8a;
+    --ulak-blue-soft:   #e0effa;
+
+    --light-bg-page:    #f8fafc;   /* slate-50 */
+    --light-bg-panel:   #ffffff;
+    --light-bg-hover:   #f1f5f9;   /* slate-100 */
+    --light-bg-strong:  #e2e8f0;   /* slate-200 */
+
+    --light-text:       #0f172a;   /* slate-900 */
+    --light-text-soft:  #334155;   /* slate-700 */
+    --light-text-mute:  #64748b;   /* slate-500 */
+
+    --light-border:     #e2e8f0;   /* slate-200 */
+    --light-border-str: #cbd5e1;   /* slate-300 */
+}
+
+/* ------------------------------------------------------------- *
+ * Light theme — engaged when <html class="theme-light">         *
+ * ------------------------------------------------------------- */
+
+html.theme-light,
+html.theme-light body {
+    background-color: var(--light-bg-page) !important;
+    color: var(--light-text) !important;
+    color-scheme: light;
+}
+
+/* Backgrounds */
+html.theme-light .bg-gray-900 { background-color: var(--light-bg-page)   !important; }
+html.theme-light .bg-gray-800 { background-color: var(--light-bg-panel)  !important; }
+html.theme-light .bg-gray-700 { background-color: var(--light-bg-hover)  !important; }
+html.theme-light .bg-gray-600 { background-color: var(--light-bg-strong) !important; }
+html.theme-light .bg-black    { background-color: var(--light-bg-panel)  !important; }
+
+/* Hover backgrounds — keep them subtle, slightly darker than panel */
+html.theme-light .hover\:bg-gray-700:hover { background-color: var(--light-bg-hover)  !important; }
+html.theme-light .hover\:bg-gray-600:hover { background-color: var(--light-bg-strong) !important; }
+html.theme-light .hover\:bg-gray-500:hover { background-color: var(--light-border-str) !important; }
+
+/* Text */
+html.theme-light .text-white      { color: var(--light-text)       !important; }
+html.theme-light .text-gray-100   { color: var(--light-text)       !important; }
+html.theme-light .text-gray-200   { color: var(--light-text)       !important; }
+html.theme-light .text-gray-300   { color: var(--light-text-soft)  !important; }
+html.theme-light .text-gray-400   { color: var(--light-text-mute)  !important; }
+html.theme-light .text-gray-500   { color: var(--light-text-mute)  !important; }
+
+/* Hover text */
+html.theme-light .hover\:text-white:hover     { color: var(--ulak-blue-dark) !important; }
+html.theme-light .hover\:text-gray-100:hover  { color: var(--ulak-blue-dark) !important; }
+html.theme-light .hover\:text-gray-200:hover  { color: var(--light-text)     !important; }
+
+/* Borders */
+html.theme-light .border-gray-500 { border-color: var(--light-border-str) !important; }
+html.theme-light .border-gray-600 { border-color: var(--light-border-str) !important; }
+html.theme-light .border-gray-700 { border-color: var(--light-border)     !important; }
+html.theme-light .border-gray-800 { border-color: var(--light-border)     !important; }
+html.theme-light .border-t        { border-top-color:    var(--light-border) !important; }
+html.theme-light .border-b        { border-bottom-color: var(--light-border) !important; }
+
+/* Accent: turn indigo highlights into Ulakbim blue */
+html.theme-light .text-indigo-400,
+html.theme-light .text-indigo-500,
+html.theme-light .text-indigo-600       { color: var(--ulak-blue) !important; }
+html.theme-light .bg-indigo-500,
+html.theme-light .bg-indigo-600         { background-color: var(--ulak-blue)      !important; }
+html.theme-light .hover\:bg-indigo-700:hover,
+html.theme-light .hover\:bg-indigo-600:hover { background-color: var(--ulak-blue-dark) !important; }
+html.theme-light .ring-indigo-500       { --tw-ring-color: var(--ulak-blue) !important; }
+html.theme-light .focus\:ring-indigo-500:focus { --tw-ring-color: var(--ulak-blue) !important; }
+
+/* Subtle shadow on cards/panels so they read as elevated against the page */
+html.theme-light .bg-gray-800 {
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.02);
+}
+
+/* Category headers (tool grid section titles) are hardcoded `color: #fff`
+   in the upstream stylesheet — invisible on a white background. Restore
+   readable contrast in light theme; hover still gets the Ulakbim accent. */
+html.theme-light .category-header {
+    color: var(--light-text) !important;
+}
+html.theme-light .category-header .category-chevron {
+    color: var(--light-text-mute) !important;
+}
+html.theme-light .category-header:hover,
+html.theme-light .category-header:hover .category-chevron {
+    color: var(--ulak-blue) !important;
+}
+
+/* Language switcher dropdown — JS-created at runtime with Tailwind classes
+   that target dark backgrounds (bg-gray-800, text-gray-200). Our generic
+   class overrides exist but high-specificity ID-scoped rules guarantee the
+   first paint after open is already themed correctly (no flicker). */
+html.theme-light #language-switcher [role="menu"] {
+    background-color: var(--light-bg-panel) !important;
+    border-color: var(--light-border) !important;
+    color: var(--light-text) !important;
+}
+html.theme-light #language-switcher [role="menuitem"] {
+    color: var(--light-text) !important;
+    background-color: transparent !important;
+}
+html.theme-light #language-switcher [role="menuitem"].bg-gray-700,
+html.theme-light #language-switcher [role="menuitem"]:hover {
+    background-color: var(--light-bg-hover) !important;
+}
+html.theme-light #language-switcher input[type="search"] {
+    background-color: var(--light-bg-panel) !important;
+    color: var(--light-text) !important;
+    border-color: var(--light-border-str) !important;
+}
+html.theme-light #language-switcher input[type="search"]::placeholder {
+    color: var(--light-text-mute) !important;
+}
+html.theme-light #language-switcher button[aria-haspopup="true"] {
+    background-color: var(--light-bg-panel) !important;
+    color: var(--light-text) !important;
+    border-color: var(--light-border-str) !important;
+}
+html.theme-light #language-switcher button[aria-haspopup="true"]:hover {
+    background-color: var(--light-bg-hover) !important;
+}
+
+/* SVG icons that rely on currentColor look fine; explicit fills sometimes don't */
+html.theme-light svg[class*="text-gray"]    { color: var(--light-text-mute) !important; }
+html.theme-light svg[class*="text-white"]   { color: var(--light-text)      !important; }
+
+/* Inputs / textareas — BentoPDF often uses bg-gray-700 for fields */
+html.theme-light input,
+html.theme-light textarea,
+html.theme-light select {
+    background-color: var(--light-bg-panel) !important;
+    color: var(--light-text)                !important;
+    border-color: var(--light-border-str)   !important;
+}
+html.theme-light input::placeholder,
+html.theme-light textarea::placeholder { color: var(--light-text-mute) !important; }
+
+/* Code blocks / pre — keep readable contrast */
+html.theme-light pre,
+html.theme-light code {
+    background-color: var(--light-bg-strong) !important;
+    color: var(--light-text)                 !important;
+}
+
+/* Navbar + footer logo override — applies in both themes.
+   The UlakPDF logo PNG is a wide horizontal wordmark (~3.23:1), so the
+   default Tailwind `h-8 w-8` square sizing crops/distorts it. Allow the
+   image to grow to its natural width while staying height-bound, and
+   hide the redundant "UlakPDF" text wordmark next to it since the PNG
+   already shows it.
+
+   Selectors are structural (data-* attributes + adjacent <span>) rather
+   than id-based: the rendered HTML in current BentoPDF builds doesn't
+   carry #nav-logo / #nav-brand ids. */
+
+/* Simple-mode navbar (default for our UlakPDF install). */
+nav[data-simple-nav] img {
+    height: 32px !important;
+    width: auto !important;
+    max-width: 200px !important;
+}
+/* Hide ONLY the wordmark span that sits right next to the logo image.
+   The previous .flex-shrink-0 > span selector was too broad and also
+   hid the language names inside the simple-mode footer's language
+   switcher (option buttons use `flex items-center gap-2` and have a
+   <span> with the language name). The `img + span` pattern only
+   matches a span that is the immediate sibling of an img — exactly the
+   logo+brand cluster. */
+nav[data-simple-nav] img + span {
+    display: none !important;
+}
+
+/* Simple-mode footer logo block — same logo+text cluster. */
+footer[data-simple-footer] img {
+    height: 32px !important;
+    width: auto !important;
+    max-width: 200px !important;
+    margin-right: 0 !important;
+}
+footer[data-simple-footer] img + span {
+    display: none !important;
+}
+
+/* Belt-and-suspenders for older/full navbars that still ship #nav-logo. */
+#nav-logo {
+    height: 32px !important;
+    width: auto !important;
+    max-width: 200px !important;
+}
+#nav-brand { display: none !important; }
+
+/* Theme toggle button — appearance kept subtle, follows current panel color */
+.spdf-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    border: 1px solid currentColor;
+    border-color: rgba(148, 163, 184, 0.4);
+    cursor: pointer;
+    margin-left: 8px;
+    transition: background-color 120ms, border-color 120ms;
+}
+.spdf-theme-toggle:hover { background: rgba(148, 163, 184, 0.15); }
+.spdf-theme-toggle svg   { width: 18px; height: 18px; }
+.spdf-theme-toggle .icon-light { display: none; }
+.spdf-theme-toggle .icon-dark  { display: inline-block; }
+html.theme-light .spdf-theme-toggle .icon-light { display: inline-block; }
+html.theme-light .spdf-theme-toggle .icon-dark  { display: none; }
