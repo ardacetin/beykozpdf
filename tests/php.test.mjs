@@ -14,12 +14,16 @@ test('PHP sources pass syntax checks', () => {
 
 test('release contains PHP entry points and no runtime service configuration', () => {
   const release = path.join(root, 'dist/php-release');
-  for (const file of ['pdf/index.php', 'pdf/app.php', 'pdf/login.php',
-    'pdf/saml-acs.php', 'pdf/metadata.php', 'pdf/engine/merge-pdf.php',
-    'pdf/engine/workers/merge.worker.php',
+  for (const file of ['htdocs/my.beykoz.edu.tr/pdf/index.php',
+    'htdocs/my.beykoz.edu.tr/pdf/app.php',
+    'htdocs/my.beykoz.edu.tr/pdf/login.php',
+    'htdocs/my.beykoz.edu.tr/pdf/saml-acs.php',
+    'htdocs/my.beykoz.edu.tr/pdf/metadata.php',
+    'htdocs/my.beykoz.edu.tr/pdf/engine/merge-pdf.php',
+    'htdocs/my.beykoz.edu.tr/pdf/engine/workers/merge.worker.php',
     'pdf-duzenle-private/vendor/autoload.php', 'pdf-duzenle-private/.env']) {
     assert.ok(statSync(path.join(release, file)).isFile(), file);
   }
   assert.equal(readdirSync(release).includes('ecosystem.config.cjs'), false);
-  assert.match(readFileSync(path.join(release, 'pdf/app.php'), 'utf8'), /PDF_ROUTE.*app/);
+  assert.match(readFileSync(path.join(release, 'htdocs/my.beykoz.edu.tr/pdf/app.php'), 'utf8'), /PDF_ROUTE.*app/);
 });

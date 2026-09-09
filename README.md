@@ -17,16 +17,31 @@ npm test
 npm run test:e2e
 ```
 
-Çıktı: `dist/pdf-duzenle-php.zip`. ZIP, sunucuda derleme veya Composer çalıştırma gerektirmeyen `pdf/` ve `pdf-duzenle-private/` klasörlerini içerir.
+Çıktı: `dist/pdf-duzenle-php.zip`. ZIP, sunucuda derleme veya Composer çalıştırma gerektirmez.
+
+## Public dizini hangisi?
+
+Canlı sunucuda uygulamanın public dizini şudur:
+
+```text
+/home/beykoz-my/htdocs/my.beykoz.edu.tr/pdf/
+```
+
+Bu dizinde `index.php`, diğer PHP giriş dosyaları, `public/`, `app-assets/` ve `engine/` bulunur. CloudPanel'in ana site kökü `/home/beykoz-my/htdocs/my.beykoz.edu.tr` olarak kalır; yalnızca onun altındaki `pdf/` uygulamanın public dizinidir.
+
+SAML kütüphanesi, gerçek HTML şablonları, ayarlar ve oturumlar public dizinin dışında tutulur:
+
+```text
+/home/beykoz-my/pdf-duzenle-private/
+```
+
+Kaynak depodaki `php/public/index.php` public giriş dosyasının şablonudur. `npm run build`, sunucuya yüklenecek tam public ağacını `dist/php-release/htdocs/my.beykoz.edu.tr/pdf/` altında üretir.
 
 ## Canlı kurulum
 
 Adım adım kurulum [CloudPanel kılavuzunda](docs/cloudpanel.md), Google alanları [SAML kılavuzunda](docs/google-workspace.md) bulunur. Özet dizinler:
 
-```text
-/home/beykoz-my/htdocs/my.beykoz.edu.tr/pdf/  # ZIP içindeki pdf/ içeriği
-/home/beykoz-my/pdf-duzenle-private/          # PHP, ayarlar, SAML kütüphanesi ve oturumlar
-```
+ZIP'i `/home/beykoz-my` altında açtığınızda `htdocs/my.beykoz.edu.tr/pdf/` ve `pdf-duzenle-private/` doğrudan doğru konumlarına yerleşir.
 
 `pdf-duzenle-private/.env` ve `certs/` web kökünün dışındadır. SAML ayarları boşken giriş sayfası çalışır; çalışma alanı açılmaz.
 

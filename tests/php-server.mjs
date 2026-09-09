@@ -8,6 +8,7 @@ import { cert, idpIssuer, requestInfo, responseXml } from './saml-fixture.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
 const release = path.join(root, 'dist/php-release');
+const siteRoot = path.join(release, 'htdocs/my.beykoz.edu.tr');
 const privateDir = path.join(release, 'pdf-duzenle-private');
 mkdirSync(path.join(privateDir, 'certs'), { recursive: true });
 writeFileSync(path.join(privateDir, 'certs/test.pem'), cert, { mode: 0o600 });
@@ -31,7 +32,7 @@ const idp = http.createServer((req, res) => {
   res.end(`<html lang="tr"><title>Yerel test kimlik sağlayıcısı</title><form method="post" action="http://127.0.0.1:3100/pdf/saml-acs.php"><input type="hidden" name="RelayState" value="${relay}"><input type="hidden" name="SAMLResponse" value="${encoded}"><button>Test hesabıyla devam et</button></form></html>`);
 });
 await new Promise(resolve => idp.listen(3101, '127.0.0.1', resolve));
-const php = spawn('php', ['-S', '127.0.0.1:3100', '-t', release], {
+const php = spawn('php', ['-S', '127.0.0.1:3100', '-t', siteRoot], {
   cwd: root,
   env: { ...process.env, PDF_TESTING: '1', PDF_PRIVATE_DIR: privateDir },
   stdio: ['ignore', 'inherit', 'inherit'],

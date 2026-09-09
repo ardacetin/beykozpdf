@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const release = path.join(root, 'dist/php-release');
-const publicDir = path.join(release, 'pdf');
+const publicDir = path.join(release, 'htdocs/my.beykoz.edu.tr/pdf');
 const privateDir = path.join(release, 'pdf-duzenle-private');
 if (!existsSync(path.join(root, 'vendor/autoload.php'))) throw new Error('Önce composer install --no-dev çalıştırın.');
 if (!existsSync(path.join(root, 'dist/pdf-duzenle-source.tar.gz'))) throw new Error('Önce npm run build çalıştırın.');
@@ -65,5 +65,5 @@ for (const name of ['composer.json', 'composer.lock', 'LICENSE', 'LICENSE-AGPL',
 cpSync(path.join(root, 'docs/cloudpanel.md'), path.join(release, 'KURULUM.md'));
 const archive = path.join(root, 'dist/pdf-duzenle-php.zip');
 rmSync(archive, { force: true });
-execFileSync('zip', ['-qr', archive, 'pdf', 'pdf-duzenle-private', 'KURULUM.md'], { cwd: release });
+execFileSync('zip', ['-qr', archive, 'htdocs', 'pdf-duzenle-private', 'KURULUM.md'], { cwd: release });
 console.info(`PHP yükleme paketi: ${archive}`);

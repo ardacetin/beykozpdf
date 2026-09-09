@@ -4,14 +4,16 @@ Uygulama mevcut `my.beykoz.edu.tr` PHP sitesinin `/pdf/` dizininde çalışır. 
 
 ## Dosyaları yerleştirme
 
-Geliştirici bilgisayarında oluşturulan `dist/pdf-duzenle-php.zip` dosyasını site kullanıcısının ana dizinine yükleyip açın. ZIP içindeki klasörleri şu konumlara yerleştirin:
+Geliştirici bilgisayarında oluşturulan `dist/pdf-duzenle-php.zip` dosyasını `/home/beykoz-my` dizinine yükleyip aynı dizinde açın. Paket sunucunun dizin yapısını içerdiği için dosyalar doğrudan şu konumlara yerleşir:
 
 ```text
 /home/beykoz-my/htdocs/my.beykoz.edu.tr/pdf/
 /home/beykoz-my/pdf-duzenle-private/
 ```
 
-İlk dizinde `index.php`, `app.php`, `engine/` ve statik dosyalar; ikinci dizinde `.env`, `php/`, `vendor/`, `web/`, `engine-pages/`, `certs/` ve `var/` bulunmalıdır. Önceki Node.js proje klasörünü doğrudan web dizini olarak kullanmayın.
+İlk dizin uygulamanın **public dizinidir**. Burada `index.php`, `app.php`, `public/`, `app-assets/`, `engine/` ve diğer PHP giriş dosyaları bulunur. İkinci dizin web erişimine kapalı uygulama alanıdır; `.env`, `php/`, `vendor/`, `web/`, `engine-pages/`, `engine-assets/`, `certs/` ve `var/` burada bulunur.
+
+CloudPanel'in site kökü `/home/beykoz-my/htdocs/my.beykoz.edu.tr` olarak kalır. CloudPanel Document Root alanını `/pdf` dizinine çevirmeyin; uygulama mevcut sitenin alt dizinidir.
 
 ```sh
 chmod 700 /home/beykoz-my/pdf-duzenle-private
