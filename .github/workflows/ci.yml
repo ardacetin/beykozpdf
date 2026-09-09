@@ -15,12 +15,23 @@ jobs:
           cache-dependency-path: |
             package-lock.json
             engine/package-lock.json
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: dom, openssl, mbstring, zlib
+          tools: composer
       - run: npm ci
       - run: npm run install:engine
+      - run: composer install --no-dev --prefer-dist --no-interaction
       - run: npm run build
       - run: npm test
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pdf-duzenle-php
+          path: dist/pdf-duzenle-php.zip
+          compression-level: 0
       - uses: actions/upload-artifact@v4
         if: always()
         with:
