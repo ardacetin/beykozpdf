@@ -3,7 +3,14 @@ declare(strict_types=1);
 
 function pdf_config(string $private): array
 {
-    $env = parse_ini_file($private . '/.env', false, INI_SCANNER_RAW);
+    $contents = file_get_contents($private . '/.env');
+    if ($contents === false) {
+        throw new RuntimeException('Configuration missing');
+    }
+    // PHP's INI parser only accepts semicolon comments consistently. The
+    // distributed file uses the more familiar dotenv-style # comments.
+    $contents = preg_replace('/^\s*#.*$/m', '', $contents);
+    $env = is_string($contents) ? parse_ini_string($contents, false, INI_SCANNER_RAW) : false;
     if ($env === false) {
         throw new RuntimeException('Configuration missing');
     }
