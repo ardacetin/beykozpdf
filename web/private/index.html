@@ -8,13 +8,13 @@
     <title>Çalışma alanı · PDF Düzenle</title>
     <link rel="icon" href="{{BASE}}/public/brand.svg" />
     <link rel="stylesheet" href="{{BASE}}/public/style.css" />
-    <link rel="stylesheet" href="{{BASE}}/app/workspace.css" />
-    <script type="module" src="{{BASE}}/app/workspace.js"></script>
+    <link rel="stylesheet" href="{{BASE}}/app-assets/workspace.css" />
+    <script type="module" src="{{BASE}}/app-assets/workspace.js"></script>
   </head>
   <body class="workspace">
     <a href="#main-content" class="skip-link">İçeriğe geç</a>
     <aside class="sidebar">
-      <a class="brand" href="{{BASE}}/app"
+      <a class="brand" href="{{BASE}}/app.php"
         ><img
           src="{{BASE}}/public/brand.svg"
           width="40"
@@ -68,7 +68,7 @@
           <div id="user-menu" class="user-menu" hidden>
             <strong>Beykoz hesabınız</strong>
             <p id="user-email"></p>
-            <form method="post" action="{{BASE}}/auth/logout">
+            <form method="post" action="{{BASE}}/logout.php">
               <input type="hidden" name="csrf" id="csrf" /><button
                 type="submit"
               >
