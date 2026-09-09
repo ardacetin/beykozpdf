@@ -94,7 +94,7 @@ document.addEventListener("click", (event) => {
   if (categoryButton) {
     category = categoryButton.dataset.category;
     if (!$("#tool-view").hidden) {
-      history.pushState({}, "", `${base}/app`);
+      history.pushState({}, "", `${base}/app.php`);
       showRoute();
     }
     render();
@@ -163,7 +163,7 @@ function showRoute() {
     document.title = `${tool.name} · PDF Düzenle`;
     $("#engine-loading").hidden = false;
     frame.title = tool.name;
-    frame.src = `${base}/engine/${tool.id}.html`;
+    frame.src = `${base}/engine/${tool.id}.php`;
     frame.onload = () => {
       $("#engine-loading").hidden = true;
       try {
@@ -192,7 +192,7 @@ function showRoute() {
   window.scrollTo({ top: 0, behavior: "instant" });
 }
 $("#back-to-tools").onclick = () => {
-  history.pushState({}, "", `${base}/app`);
+  history.pushState({}, "", `${base}/app.php`);
   showRoute();
   previousFocus?.focus();
 };
@@ -228,7 +228,7 @@ $("#help").onclick = () =>
   );
 $("#about").onclick = () =>
   showInfo(
-    `<span class="eyebrow">BEYKOZ ÜNİVERSİTESİ</span><h2>PDF Düzenle</h2><p>Üniversite hesabınızla erişebildiğiniz, belgelerinizi cihazınızda işleyen PDF çalışma alanınız.</p><p>UlakPDF ve BentoPDF temel alınarak hazırlanmıştır. BentoPDF motoru AGPL-3.0 lisanslıdır. Uygulama kaynak kodu, yerel değişiklikler ve lisanslar aşağıdaki arşivde bulunur.</p><p><a class="primary" href="${base}/source">Kaynak kod ve lisansları indir ↗</a></p><p>Oturum çerezi en fazla 8 saat saklanır. Favori araçlar yalnızca bu tarayıcıda tutulur. PDF dosyaları sunucuya gönderilmez.</p>`,
+    `<span class="eyebrow">BEYKOZ ÜNİVERSİTESİ</span><h2>PDF Düzenle</h2><p>Üniversite hesabınızla erişebildiğiniz, belgelerinizi cihazınızda işleyen PDF çalışma alanınız.</p><p>UlakPDF ve BentoPDF temel alınarak hazırlanmıştır. BentoPDF motoru AGPL-3.0 lisanslıdır. Uygulama kaynak kodu, yerel değişiklikler ve lisanslar aşağıdaki arşivde bulunur.</p><p><a class="primary" href="${base}/source.php">Kaynak kod ve lisansları indir ↗</a></p><p>Oturum çerezi en fazla 8 saat saklanır. Favori araçlar yalnızca bu tarayıcıda tutulur. PDF dosyaları sunucuya gönderilmez.</p>`,
   );
 for (const button of dialog.querySelectorAll(".dialog-close,.dialog-ok"))
   button.onclick = () => dialog.close();
@@ -240,7 +240,7 @@ $("#today").textContent = new Intl.DateTimeFormat("tr-TR", {
 $("#year").textContent = new Date().getFullYear();
 async function checkSession() {
   try {
-    const response = await fetch(`${base}/api/me`, { cache: "no-store" });
+    const response = await fetch(`${base}/me.php`, { cache: "no-store" });
     if (response.status === 401) return location.assign(`${base}/`);
     if (!response.ok) throw new Error();
     const user = await response.json();

@@ -93,6 +93,8 @@ try {
             [
               ".git",
               "node_modules",
+              "vendor",
+              "var",
               "dist",
               "certs",
               "test-results",
@@ -118,3 +120,4 @@ writeFileSync(
   JSON.stringify({ base, builtAt: new Date().toISOString() }),
 );
 console.info(`PDF Düzenle hazır: ${base}`);
+await import('./package-php.mjs');

@@ -7,7 +7,7 @@ async function signIn(page) {
     .getByRole("link", { name: "Google Workspace ile giriş yap" })
     .click();
   await page.getByRole("button", { name: "Test hesabıyla devam et" }).click();
-  await expect(page).toHaveURL(/\/pdf\/app$/);
+  await expect(page).toHaveURL(/\/pdf\/app\.php$/);
   await expect(page.locator(".tool-card")).toHaveCount(24);
 }
 test("desktop landing, workspace search, favorites, dialogs and logout", async ({
@@ -48,7 +48,7 @@ test("desktop landing, workspace search, favorites, dialogs and logout", async (
   await page.getByRole("button", { name: "Hesap menüsünü aç" }).click();
   await page.getByRole("button", { name: "Oturumu kapat" }).click();
   await expect(page).toHaveURL(/\/pdf\/$/);
-  await page.goto("/pdf/engine/merge-pdf.html");
+  await page.goto("/pdf/engine/merge-pdf.php");
   await expect(page).toHaveURL(/\/pdf\/$/);
 });
 test("mobile views have no horizontal overflow and navigation works", async ({

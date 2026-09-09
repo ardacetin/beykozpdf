@@ -1,57 +1,35 @@
 # PDF Düzenle — Beykoz Üniversitesi
 
-Beykoz Üniversitesi için özel PDF çalışma alanı. Kurumsal ana renk **#7A232C**, Türkçe arayüz, Google Workspace özel SAML uygulaması ile giriş. Yayın adresi: **https://my.beykoz.edu.tr/pdf**.
+Beykoz Üniversitesi için, `https://my.beykoz.edu.tr/pdf/` altında çalışan özel PDF çalışma alanı. Arayüz kurumsal **#7A232C** rengiyle hazırlanmıştır. PDF işlemleri BentoPDF motoruyla kullanıcının tarayıcısında yapılır; belgeler sunucuya yüklenmez.
 
-Node.js + Express + Redis kullanır. Python sunucusu, Docker veya dosya yükleme servisi gerekmez. PDF işlemleri tarayıcıda, UlakPDF kaynaklı BentoPDF motoruyla yapılır. Giriş sayfası herkese görünür; çalışma alanı, araçlar, JavaScript/WASM dosyaları ve kaynak arşivi sunucuda oturumla korunur.
+Canlı uygulama standart PHP-FPM ile çalışır. Node.js, PM2, Redis, Docker veya Python servisi gerekmez. Google Workspace özel SAML uygulaması ile giriş yapılır ve yalnızca tam `@beykoz.edu.tr` alanındaki hesaplar kabul edilir.
 
-## Başlangıç
+## Hazır PHP paketini oluşturma
 
-Node.js **22.12+** (veya 24 LTS), npm ve derleme için yaklaşık 6 GB kullanılabilir bellek.
+Node.js yalnızca geliştirici bilgisayarında ön yüzü derlemek için kullanılır:
 
 ```sh
 npm ci
 npm run install:engine
+composer install --no-dev --prefer-dist
 npm run build
-```
-
-Yerel giriş ekranını görmek için:
-
-```sh
-NODE_ENV=development APP_URL=http://localhost:3000/pdf REDIS_URL= npm run dev
-```
-
-Adres: http://localhost:3000/pdf/. Yerelde SAML ayarları boşken araçlara giriş yapılamaz. Bir geliştirme giriş atlaması yoktur. Tarayıcı testleri kendi geçici sertifikalı yerel IdP'sini kullanır; bu kod production başlangıcında yüklenmez.
-
-## Canlı kurulum
-
-1. [CloudPanel kurulum kılavuzu](docs/cloudpanel.md) ile Node.js sürecini başlatın. Paylaşılan mevcut `my.beykoz.edu.tr` PHP/Varnish yapılandırmasının `/pdf` eklenmiş tam hali [deploy/cloudpanel-nginx.conf](deploy/cloudpanel-nginx.conf) içindedir. Mevcut site ayarına uygulanır; yeni site veya subdomain oluşturulmaz.
-2. `.env.example` dosyasını `.env` olarak kopyalayın, `SESSION_SECRET` üretin ve Redis adresini girin.
-3. Google henüz hazır değilse SAML URL ve issuer alanlarını boş bırakın. Production giriş ekranı açılır, araçlar kapalı kalır.
-4. [Google Workspace SAML kılavuzuna](docs/google-workspace.md) göre uygulamayı oluşturun. SSO URL, Entity ID ve sertifikayı `.env` üzerinden tanımlayın; Node.js sürecini yeniden başlatın.
-
-`APP_URL` alt dizini derleme sırasında motor yollarına yazılır. Alan adı değişikliği SAML ayarlarıyla birlikte ele alınmalıdır. `/pdf` alt dizini değişirse yeniden derleyin. Giriş ayarları değiştiğinde yalnızca süreç yeniden başlatması gerekir.
-
-## İçerik
-
-- 24 seçili PDF aracı: birleştirme, bölme, sıkıştırma, düzenleme, sayfa işlemleri, Office/görsel dönüşümleri, OCR, şifreleme ve imza.
-- Arama, kategori filtreleri, yerel favoriler, mobil menü, yardım ve gizlilik açıklamaları.
-- İmzalı SAML yanıtı ve assertion doğrulaması; audience, issuer, recipient, süre, InResponseTo ve tarayıcıya bağlı RelayState kontrolü.
-- Sadece imzalı **NameID** içindeki tam `@beykoz.edu.tr` adresleri kabul edilir. Google Admin'de tüm kuruma erişim açılmalıdır.
-- Redis'te en fazla 8 saatlik oturum; Secure/HttpOnly çerezler, CSRF korumalı çıkış, giriş hız sınırı.
-- Gelişmiş motorlar bazı WASM/OCR bileşenlerini CDN'den indirebilir. Belgeler sunucuya yüklenmez. Sistem tam çevrimdışı kurulum olarak sunulmaz.
-
-## Test
-
-```sh
 npm test
-npx playwright install chromium
 npm run test:e2e
 ```
 
-Sunucu testleri gerçek RSA/SHA-256 ile imzalanmış geçici SAML belgeleri üretir. Tarayıcı testleri masaüstü/mobil arayüzü, oturum, arama, favoriler, çıkış ve gerçek PDF birleştirme/indirme akışını kapsar. Google hesabıyla canlı SSO ve CloudPanel sunucusundaki doğrulama, kurumsal yapılandırma tamamlanınca yapılmalıdır.
+Çıktı: `dist/pdf-duzenle-php.zip`. ZIP, sunucuda derleme veya Composer çalıştırma gerektirmeyen `pdf/` ve `pdf-duzenle-private/` klasörlerini içerir.
 
-## Kaynaklar ve lisans
+## Canlı kurulum
 
-`engine/`, [ciari/ulakpdf](https://github.com/ciari/ulakpdf) deposunun `bentopdf/` dizininden alınmıştır. Kaynak revizyonu ve yerel değişiklikler: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Adım adım kurulum [CloudPanel kılavuzunda](docs/cloudpanel.md), Google alanları [SAML kılavuzunda](docs/google-workspace.md) bulunur. Özet dizinler:
 
-Bu deponun mevcut `LICENSE` dosyası GPL-3.0 olarak korunmuştur. BentoPDF ve UlakPDF'den türetilen motor/tema AGPL-3.0 şartlarına tabidir; metin `LICENSE-AGPL` ve `engine/LICENSE` içindedir. Giriş yapan kullanıcılar **Uygulama hakkında → Kaynak kod ve lisansları indir** üzerinden dağıtılan sürümün kaynaklarına erişebilir. Açık kaynak lisansı, uygulamanın anonim kullanıma açılmasını gerektiren bir giriş ayarı değildir.
+```text
+/home/beykoz-my/htdocs/my.beykoz.edu.tr/pdf/  # ZIP içindeki pdf/ içeriği
+/home/beykoz-my/pdf-duzenle-private/          # PHP, ayarlar, SAML kütüphanesi ve oturumlar
+```
+
+`pdf-duzenle-private/.env` ve `certs/` web kökünün dışındadır. SAML ayarları boşken giriş sayfası çalışır; çalışma alanı açılmaz.
+
+## Kaynak ve lisans
+
+Uygulama GPL-3.0, BentoPDF motoru AGPL-3.0 kapsamındadır. Giriş yapan kullanıcılar kullanılan kaynak arşivini uygulamadaki **Hakkında** ekranından indirebilir. Ayrıntılar `LICENSE`, `LICENSE-AGPL` ve `THIRD_PARTY_NOTICES.md` dosyalarındadır.

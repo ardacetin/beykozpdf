@@ -8,8 +8,8 @@ Google kimlik sağlayıcı ayrıntılarındaki **SSO URL**, **Entity ID** ve ind
 
 | Google alanı                   | Değer                                             |
 | ------------------------------ | ------------------------------------------------- |
-| ACS URL                        | `https://my.beykoz.edu.tr/pdf/auth/saml/acs`      |
-| Entity ID                      | `https://my.beykoz.edu.tr/pdf/auth/saml/metadata` |
+| ACS URL                        | `https://my.beykoz.edu.tr/pdf/saml-acs.php`       |
+| Entity ID                      | `https://my.beykoz.edu.tr/pdf/metadata.php`       |
 | Start URL                      | Boş bırakın                                       |
 | Signed response / İmzalı yanıt | **İşaretli olmalı**                               |
 | Name ID format                 | **EMAIL**                                         |
@@ -27,7 +27,7 @@ APP_URL=https://my.beykoz.edu.tr/pdf
 SAML_ENTRY_POINT=https://accounts.google.com/o/saml2/idp?idpid=GOOGLE_TARAFINDAKI_DEGER
 SAML_IDP_ISSUER=https://accounts.google.com/o/saml2?idpid=GOOGLE_TARAFINDAKI_DEGER
 SAML_IDP_CERT_PATH=./certs/google-workspace.pem
-SAML_SP_ENTITY_ID=https://my.beykoz.edu.tr/pdf/auth/saml/metadata
+SAML_SP_ENTITY_ID=https://my.beykoz.edu.tr/pdf/metadata.php
 ```
 
 SSO URL ve issuer örneklerini tahmin ederek kullanmayın; Google ekranındaki değerleri aynen kopyalayın. İndirilen PEM sertifikasını belirtilen dosyaya yerleştirin. Bu, Google'ın **herkese açık sertifikasıdır**; Google özel anahtarı alınmaz.
@@ -37,21 +37,20 @@ mkdir -p certs
 chmod 700 certs
 # İndirilen sertifikayı certs/google-workspace.pem olarak kaydedin.
 chmod 600 certs/google-workspace.pem .env
-pm2 restart pdf-duzenle --update-env
 ```
 
-Kurulumdan sonra SP metadata adresi `https://my.beykoz.edu.tr/pdf/auth/saml/metadata` olur.
+Kurulumdan sonra SP metadata adresi `https://my.beykoz.edu.tr/pdf/metadata.php` olur.
 
 ## Girişi deneme
 
 Tarayıcıdan **https://my.beykoz.edu.tr/pdf/** adresine gidip **Google Workspace ile giriş yap** düğmesine basın. Bu uygulama **SP-initiated SSO** kullanır. Google Admin'deki “Test SAML login” ve uygulama başlatıcısının doğrudan IdP-initiated POST akışı desteklenmez; istekle eşleşmeyen yanıtlar reddedilir. Kullanıcı kısayolu için giriş sayfasının adresini kullanın.
 
-Başarılı girişten sonra `/pdf/app` açılır. Başka alan adından bir hesapla erişimin reddedildiğini kontrol edin. Oturumu kapattıktan sonra `/pdf/engine/merge-pdf.html` yeniden giriş sayfasına dönmelidir.
+Başarılı girişten sonra `/pdf/app.php` açılır. Başka alan adından bir hesapla erişimin reddedildiğini kontrol edin. Oturumu kapattıktan sonra `/pdf/engine/merge-pdf.php` yeniden giriş sayfasına dönmelidir.
 
 SAML dönüşü başka bir siteden POST olduğu için canlı oturum çerezi `SameSite=None; Secure; HttpOnly` kullanır. HTTPS, güvenilir Nginx proxy başlıkları ve tarayıcı çerez izni gereklidir. İstekler 5 dakika içinde tamamlanmalı, sunucu saati senkron olmalıdır. Yerel HTTP üzerinde gerçek Google SSO testi yapmayın.
 
-Çıkış yalnızca PDF Düzenle oturumunu sonlandırır. Google Workspace hesabından çıkış veya Google Single Logout uygulanmaz. Google hesabı askıya alındığında mevcut uygulama oturumu en fazla 8 saat geçerliliğini koruyabilir; acil iptal için ilgili Redis oturumu silinmelidir.
+Çıkış yalnızca PDF Düzenle oturumunu sonlandırır. Google Workspace hesabından çıkış veya Google Single Logout uygulanmaz. Google hesabı askıya alındığında mevcut uygulama oturumu en fazla 8 saat geçerliliğini koruyabilir; acil iptal için `pdf-duzenle-private/var/sessions/` altındaki PHP oturumları temizlenebilir.
 
-Sertifika yenilendiğinde PEM dosyasını güncelleyin ve uygulamayı yeniden başlatın. Sertifikanın bitiş tarihini kurumun izleme sistemine ekleyin.
+Sertifika yenilendiğinde PEM dosyasını güncelleyin. Sertifikanın bitiş tarihini kurumun izleme sistemine ekleyin.
 
 Kaynak: [Google Workspace — özel SAML uygulaması kurma](https://knowledge.workspace.google.com/admin/apps/set-up-your-own-custom-saml-app?hl=en).

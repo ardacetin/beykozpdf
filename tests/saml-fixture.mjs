@@ -56,6 +56,8 @@ export function responseXml({
   expired = false,
   recipient = callback,
   unsigned = false,
+  transform = (xml) => xml,
+  signTags = ["Assertion", "Response"],
 }) {
   const now = Date.now();
   const start = new Date(now - 60_000).toISOString();
@@ -63,8 +65,9 @@ export function responseXml({
   const issue = new Date(now).toISOString();
   const assertionId = "_" + randomUUID();
   let xml = `<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="_${randomUUID()}" Version="2.0" IssueInstant="${issue}" Destination="${escape(callback)}" InResponseTo="${escape(id)}"><saml:Issuer>${escape(issuer)}</saml:Issuer><samlp:Status><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/></samlp:Status><saml:Assertion ID="${assertionId}" Version="2.0" IssueInstant="${issue}"><saml:Issuer>${escape(issuer)}</saml:Issuer><saml:Subject><saml:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress">${escape(email)}</saml:NameID><saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"><saml:SubjectConfirmationData InResponseTo="${escape(id)}" Recipient="${escape(recipient)}" NotOnOrAfter="${end}"/></saml:SubjectConfirmation></saml:Subject><saml:Conditions NotBefore="${start}" NotOnOrAfter="${end}"><saml:AudienceRestriction><saml:Audience>${escape(audience)}</saml:Audience></saml:AudienceRestriction></saml:Conditions><saml:AuthnStatement AuthnInstant="${issue}" SessionIndex="_${randomUUID()}"><saml:AuthnContext><saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</saml:AuthnContextClassRef></saml:AuthnContext></saml:AuthnStatement></saml:Assertion></samlp:Response>`;
+  xml = transform(xml);
   if (unsigned) return xml;
-  for (const tag of ["Assertion", "Response"]) {
+  for (const tag of signTags) {
     const sig = new SignedXml({
       privateKey: key,
       publicCert: cert,
