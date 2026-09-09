@@ -24,7 +24,7 @@ Adres: http://localhost:3000/pdf/. Yerelde SAML ayarları boşken araçlara giri
 
 ## Canlı kurulum
 
-1. [CloudPanel kurulum kılavuzu](docs/cloudpanel.md) ile Node.js sürecini ve `/pdf/` Nginx yönlendirmesini kurun.
+1. [CloudPanel kurulum kılavuzu](docs/cloudpanel.md) ile Node.js sürecini başlatın. Paylaşılan mevcut `my.beykoz.edu.tr` PHP/Varnish yapılandırmasının `/pdf` eklenmiş tam hali [deploy/cloudpanel-nginx.conf](deploy/cloudpanel-nginx.conf) içindedir. Mevcut site ayarına uygulanır; yeni site veya subdomain oluşturulmaz.
 2. `.env.example` dosyasını `.env` olarak kopyalayın, `SESSION_SECRET` üretin ve Redis adresini girin.
 3. Google henüz hazır değilse SAML URL ve issuer alanlarını boş bırakın. Production giriş ekranı açılır, araçlar kapalı kalır.
 4. [Google Workspace SAML kılavuzuna](docs/google-workspace.md) göre uygulamayı oluşturun. SSO URL, Entity ID ve sertifikayı `.env` üzerinden tanımlayın; Node.js sürecini yeniden başlatın.
