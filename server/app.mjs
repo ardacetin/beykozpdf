@@ -229,7 +229,7 @@ export function createApp({ config, saml, store }) {
     res
       .status(404)
       .type("text")
-      .send("Sayfa bulunamadı. Araçlara dönmek için /app adresini kullanın."),
+      .send(`Sayfa bulunamadı. Araçlara dönmek için ${base}/app adresini kullanın.`),
   );
   app.use((error, _req, res, _next) => {
     console.error("Request failed:", error.code || "internal_error");
