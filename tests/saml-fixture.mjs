@@ -57,7 +57,9 @@ export function responseXml({
   recipient = callback,
   unsigned = false,
   transform = (xml) => xml,
-  signTags = ["Assertion", "Response"],
+  // Match Google Workspace with "Signed response" enabled: the complete
+  // Response is signed and protects the Assertion contained within it.
+  signTags = ["Response"],
 }) {
   const now = Date.now();
   const start = new Date(now - 60_000).toISOString();

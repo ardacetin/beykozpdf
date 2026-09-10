@@ -64,7 +64,11 @@ function pdf_saml_settings(array $config): array
             'x509cert' => $config['cert'],
         ],
         'security' => [
-            'wantAssertionsSigned' => true, 'wantMessagesSigned' => true,
+            // Google Workspace's "Signed response" option signs the complete
+            // SAML Response. Requiring a second, separate Assertion signature
+            // rejects that valid Google profile even though the signed Response
+            // already protects the embedded Assertion.
+            'wantAssertionsSigned' => false, 'wantMessagesSigned' => true,
             'wantXMLValidation' => true, 'wantNameId' => true,
             'requestedAuthnContext' => false, 'destinationStrictlyMatches' => true,
             'relaxDestinationValidation' => false,

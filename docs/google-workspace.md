@@ -16,7 +16,7 @@ Google kimlik sağlayıcı ayrıntılarındaki **SSO URL**, **Entity ID** ve ind
 | Name ID değeri                 | **Basic Information → Primary email**             |
 | Ek attribute mapping           | Gerekmiyor                                        |
 
-Google varsayılan olarak assertion'ı imzalar; bu uygulama ayrıca yanıtın tamamının imzasını ister. Dolayısıyla **Signed response** zorunludur.
+Google varsayılan olarak yalnızca assertion'ı imzalar. **Signed response** seçildiğinde yanıtın tamamı imzalanır ve bu imza yanıtın içindeki assertion'ı da korur. Uygulama Google Workspace'in bu profiline göre yanıt imzasını zorunlu tutar; assertion üzerinde ikinci bir imza aramaz. Dolayısıyla **Signed response** zorunludur.
 
 **User access → On for everyone** seçerek tüm üniversite kullanıcılarına açın. Uygulama ayrıca e-postanın tam alan adını sunucuda kontrol eder; `@beykoz.edu.tr` dışındaki adresler, alt alan adları ve kişisel Google hesapları kabul edilmez.
 

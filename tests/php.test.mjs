@@ -32,6 +32,17 @@ test('PHP config accepts dotenv-style comments', () => {
   }
 });
 
+test('SAML requires the Google Workspace signed-response profile', () => {
+  const code = `require ${JSON.stringify(path.join(root, 'php/config.php'))}; ` +
+    `$settings = pdf_saml_settings(['url' => 'https://my.beykoz.edu.tr/pdf', ` +
+    `'entity' => 'https://my.beykoz.edu.tr/pdf/metadata.php', 'issuer' => 'https://accounts.google.com/o/saml2?idpid=test', ` +
+    `'entry' => 'https://accounts.google.com/o/saml2/idp?idpid=test', 'cert' => 'test']); ` +
+    `echo json_encode($settings['security']);`;
+  const security = JSON.parse(execFileSync('php', ['-r', code], { encoding: 'utf8' }));
+  assert.equal(security.wantMessagesSigned, true);
+  assert.equal(security.wantAssertionsSigned, false);
+});
+
 test('release contains PHP entry points and no runtime service configuration', () => {
   const release = path.join(root, 'dist/php-release');
   for (const file of ['htdocs/my.beykoz.edu.tr/pdf/index.php',
