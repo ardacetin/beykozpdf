@@ -47,6 +47,8 @@ Tarayıcıdan **https://my.beykoz.edu.tr/pdf/** adresine gidip **Google Workspac
 
 Başarılı girişten sonra `/pdf/app.php` açılır. Başka alan adından bir hesapla erişimin reddedildiğini kontrol edin. Oturumu kapattıktan sonra `/pdf/engine/merge-pdf.php` yeniden giriş sayfasına dönmelidir.
 
+`Google giriş yanıtı doğrulanamadı` mesajı alınırsa Google'daki **Name ID formatının EMAIL**, **Name ID değerinin Basic Information → Primary email** ve **Signed response** seçeneğinin işaretli olduğunu yeniden kontrol edin. Güncel sürüm, imza veya talep eşleştirme hatasının nedenini SAML yanıtını kaydetmeden PHP hata günlüğüne yazar. Giriş denemesinden sonra CloudPanel günlüklerinde `PDF Düzenle: SAML authentication rejected` metnini arayın.
+
 SAML dönüşü başka bir siteden POST olduğu için canlı oturum çerezi `SameSite=None; Secure; HttpOnly` kullanır. HTTPS, güvenilir Nginx proxy başlıkları ve tarayıcı çerez izni gereklidir. İstekler 5 dakika içinde tamamlanmalı, sunucu saati senkron olmalıdır. Yerel HTTP üzerinde gerçek Google SSO testi yapmayın.
 
 Çıkış yalnızca PDF Düzenle oturumunu sonlandırır. Google Workspace hesabından çıkış veya Google Single Logout uygulanmaz. Google hesabı askıya alındığında mevcut uygulama oturumu en fazla 8 saat geçerliliğini koruyabilir; acil iptal için `pdf-duzenle-private/var/sessions/` altındaki PHP oturumları temizlenebilir.

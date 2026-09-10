@@ -181,7 +181,11 @@ function pdf_run(string $private, string $route): void
         try {
             if (!is_string($_POST['SAMLResponse'] ?? null)) throw new RuntimeException('Missing response');
             $auth->processResponse($flow['id']);
-            if ($auth->getErrors() || !$auth->isAuthenticated()) throw new RuntimeException('Rejected response');
+            if ($auth->getErrors() || !$auth->isAuthenticated()) {
+                $codes = implode(',', $auth->getErrors());
+                $reason = trim((string)$auth->getLastErrorReason());
+                throw new RuntimeException('Toolkit [' . $codes . ']' . ($reason !== '' ? ': ' . $reason : ''));
+            }
             pdf_assert_signed_claims($auth->getLastResponseXML(), $config, $flow['id']);
             $email = strtolower(trim($auth->getNameId() ?? ''));
             if (!filter_var($email, FILTER_VALIDATE_EMAIL) || !str_ends_with($email, '@beykoz.edu.tr')) {
@@ -194,7 +198,9 @@ function pdf_run(string $private, string $route): void
             ];
             pdf_redirect($base . '/app.php');
         } catch (Throwable $error) {
-            error_log('PDF Düzenle: SAML authentication rejected');
+            // Error messages contain validation categories/expected endpoints, not the SAML payload.
+            $reason = str_replace(["\r", "\n", "\0"], ' ', $error->getMessage());
+            error_log('PDF Düzenle: SAML authentication rejected; ' . get_class($error) . ': ' . substr($reason, 0, 500));
             pdf_redirect($base . '/?error=authentication');
         }
     }
