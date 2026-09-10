@@ -147,3 +147,38 @@ test("real PDF merge downloads a valid three-page PDF without file uploads", asy
   await page.getByRole("button", { name: "Tüm araçlar", exact: true }).click();
   await expect(page.locator(".tool-card")).toHaveCount(24);
 });
+
+test("PDF.js tools load, split and convert a real PDF to JPG and PNG", async ({
+  page,
+}) => {
+  await signIn(page);
+  const document = await PDFDocument.create();
+  document.addPage([320, 240]);
+  const input = {
+    name: "ornek.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from(await document.save()),
+  };
+
+  for (const [tool, extension] of [
+    ["pdf-to-jpg", ".jpg"],
+    ["pdf-to-png", ".png"],
+  ]) {
+    await page.locator(`.tool-link[href="?tool=${tool}"]`).click();
+    const frame = page.frameLocator("#engine-frame");
+    await frame.locator("#file-input").setInputFiles(input);
+    const downloadPromise = page.waitForEvent("download");
+    await frame.locator("#process-btn").click();
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toMatch(new RegExp(`\\${extension}$`));
+    await page.locator("#back-to-tools").click();
+  }
+
+  await page.locator('.tool-link[href="?tool=split-pdf"]').click();
+  const splitFrame = page.frameLocator("#engine-frame");
+  await splitFrame.locator("#file-input").setInputFiles(input);
+  await expect(splitFrame.locator("#split-options")).toBeVisible();
+  await expect(splitFrame.locator("#file-display-area")).toContainText(
+    "1 pages",
+  );
+});

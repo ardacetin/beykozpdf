@@ -41,7 +41,7 @@ location ^~ /pdf/ { proxy_pass http://127.0.0.1:3000; ... }
 
 Mevcut genel `location /`, Varnish ve 8080 PHP-FPM bloklarını değiştirmeyin. `/pdf/index.php` standart PHP akışında çalışır. PHP sürümü `.php` uzantılı açık uçlar kullandığı için ek rewrite kuralına ihtiyaç duymaz.
 
-Dağıtım paketi ES modüllerini `.js` uzantısıyla yayınlar. Bu, CloudPanel'in varsayılan Nginx MIME eşlemesinde PDF.js worker dosyalarının tarayıcı tarafından reddedilmesini önler. Kaynaktaki `engine/dist` dizinini doğrudan sunucuya kopyalamayın; `dist/pdf-duzenle-php.zip` içindeki hazırlanmış `engine/` dizinini kullanın.
+Dağıtım paketi ES modüllerini `.js` uzantısıyla yayınlar. Bu, CloudPanel'in varsayılan Nginx MIME eşlemesinde PDF.js worker dosyalarının tarayıcı tarafından reddedilmesini önler. Araç giriş dosyalarına paket sürümü eklenir; yeni dağıtım sonrasında Cloudflare veya tarayıcı eski worker yolunu kullanmaz. Kaynaktaki `engine/dist` dizinini doğrudan sunucuya kopyalamayın; `dist/pdf-duzenle-php.zip` içindeki hazırlanmış `engine/` dizinini kullanın.
 
 CloudPanel site ayarından PHP **8.2 veya üstünü** seçin. Gerekli uzantılar: DOM/XML, OpenSSL, mbstring ve zlib.
 

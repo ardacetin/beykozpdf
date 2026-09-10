@@ -27,10 +27,21 @@ cpSync(path.join(root, 'web/private'), path.join(publicDir, 'app-assets'), { rec
 // Preserve native browser module/worker URLs. Only static code/assets are public;
 // every HTML document, including nested PDF viewers, has an authenticated PHP entry.
 const engine = path.join(root, 'engine/dist');
+const engineAssetVersion = Math.floor(Date.now() / 1000).toString(36);
 const files = readdirSync(engine, { recursive: true, withFileTypes: true }).filter(f => f.isFile())
   .map(f => path.relative(engine, path.join(f.parentPath, f.name)));
 const htmlNames = [...new Set(files.filter(f => f.endsWith('.html')).map(f => path.basename(f)))];
 const workerNames = [...new Set(files.filter(f => f.startsWith(`workers${path.sep}`) && f.endsWith('.js')).map(f => path.basename(f)))];
+function versionJavaScriptLinks(text) {
+  // Vite's entry modules import hashed chunks, but Cloudflare can retain an
+  // older response under the same hashed URL after the packaging rewrites
+  // .mjs worker paths to .js. Version every local module/worker URL so the
+  // whole import graph is refreshed together.
+  return text.replace(
+    /(["'`])((?:\.{1,2}\/|\/pdf\/)[^"'`\s?]+\.js)\1/g,
+    (_match, quote, url) => `${quote}${url}?v=${engineAssetVersion}${quote}`,
+  );
+}
 function rewriteLinks(text) {
   for (const name of htmlNames) text = text.replaceAll(name, name.slice(0, -5) + '.php');
   for (const name of workerNames) text = text.replaceAll(name, name.slice(0, -3) + '.php');
@@ -38,7 +49,13 @@ function rewriteLinks(text) {
   // application/octet-stream. Module scripts/workers are rejected by browsers
   // with that MIME type, so publish the same ES modules with a .js extension.
   text = text.replaceAll('.mjs', '.js');
-  return text;
+  return versionJavaScriptLinks(text);
+}
+function rewriteHtml(text) {
+  return rewriteLinks(text).replace(
+    /((?:src|href)=["'][^"'?]+\.(?:js|css))(["'])/gi,
+    `$1?v=${engineAssetVersion}$2`,
+  );
 }
 for (const rel of files) {
   if (rel.endsWith('.map')) continue;
@@ -49,7 +66,7 @@ for (const rel of files) {
   if (rel.endsWith('.html')) {
     const hidden = path.join(privateDir, 'engine-pages', rel);
     mkdirSync(path.dirname(hidden), { recursive: true });
-    writeFileSync(hidden, rewriteLinks(readFileSync(src, 'utf8')));
+    writeFileSync(hidden, rewriteHtml(readFileSync(src, 'utf8')));
     const depth = rel.split(path.sep).length;
     writeFileSync(target.slice(0, -5) + '.php', `<?php\ndeclare(strict_types=1);\ndefine('PDF_ROUTE', 'engine');\ndefine('PDF_ENGINE_FILE', '${rel}');\nrequire dirname(__DIR__, ${depth}) . '/index.php';\n`);
   } else if (rel.startsWith(`workers${path.sep}`) && rel.endsWith('.js')) {

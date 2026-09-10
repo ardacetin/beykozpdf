@@ -70,4 +70,15 @@ test('release publishes browser modules with CloudPanel-compatible JS paths', ()
   for (const file of files.filter(file => /\.(?:js|php)$/.test(file))) {
     assert.doesNotMatch(readFileSync(path.join(engineDir, file), 'utf8'), /\.mjs\b/, file);
   }
+  const splitPage = readFileSync(
+    path.join(root, 'dist/php-release/pdf-duzenle-private/engine-pages/split-pdf.html'),
+    'utf8',
+  );
+  assert.match(splitPage, /split-pdf-[^"']+\.js\?v=[a-z0-9]+/);
+  const splitEntryName = splitPage.match(/assets\/(split-pdf-[^"'?]+\.js)\?v=/)?.[1];
+  assert.ok(splitEntryName);
+  const splitEntry = readFileSync(path.join(engineDir, 'assets', splitEntryName), 'utf8');
+  assert.match(splitEntry, /\.\/main-[^"'`?]+\.js\?v=[a-z0-9]+/);
+  assert.match(splitEntry, /\/pdf\/engine\/assets\/pdf\.worker[^"'`?]+\.js\?v=[a-z0-9]+/);
+  assert.doesNotMatch(splitEntry, /["'`](?:\.\/|\/pdf\/)[^"'`?]+\.js["'`]/);
 });
