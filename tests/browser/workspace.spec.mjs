@@ -20,6 +20,10 @@ test("desktop landing, workspace search, favorites, dialogs and logout", async (
   await expect(page.locator(".landing-footer")).toContainText(
     "Beykoz Üniversitesi Bilgi İşlem Direktörlüğü",
   );
+  await expect(page.locator('script[src*="/public/login.js"]')).toHaveAttribute(
+    "src",
+    /login\.js\?v=\d+$/,
+  );
   await page.screenshot({
     path: "test-results/login-desktop.png",
     fullPage: true,
@@ -31,6 +35,9 @@ test("desktop landing, workspace search, favorites, dialogs and logout", async (
   await expect(page.locator(".workspace-footer")).toContainText(
     "Beykoz Üniversitesi Bilgi İşlem Direktörlüğü",
   );
+  await expect(
+    page.locator('script[src*="/app-assets/workspace.js"]'),
+  ).toHaveAttribute("src", /workspace\.js\?v=\d+$/);
   await page.getByRole("button", { name: "Uygulama hakkında" }).click();
   await expect(
     page.getByRole("link", { name: /Kaynak kodu GitHub’da görüntüle/ }),

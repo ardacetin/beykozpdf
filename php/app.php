@@ -24,6 +24,15 @@ function pdf_fail(int $status, string $message): never
     exit($message);
 }
 
+function pdf_render_html(string $file, string $base, array $assets): string
+{
+    $html = file_get_contents($file);
+    if ($html === false) throw new RuntimeException('Template unavailable');
+    $modified = array_map(static fn(string $asset): int => (int)(filemtime($asset) ?: 0), $assets);
+    $version = (string)max([0, ...$modified]);
+    return str_replace(['{{BASE}}', '{{VERSION}}'], [$base, $version], $html);
+}
+
 function pdf_rate_limit(string $private): void
 {
     // One bounded, locked file; no external process or database required.
@@ -150,7 +159,9 @@ function pdf_run(string $private, string $route): void
         if (isset($_SESSION['user'])) pdf_redirect($base . '/app.php');
         session_write_close();
         header('Content-Type: text/html; charset=utf-8');
-        echo str_replace('{{BASE}}', $base, file_get_contents($private . '/web/public/login.html'));
+        echo pdf_render_html($private . '/web/public/login.html', $base, [
+            $private . '/web/public/style.css', $private . '/web/public/login.js',
+        ]);
         return;
     }
     if (in_array($route, ['login', 'acs', 'metadata'], true)) {
@@ -223,7 +234,10 @@ function pdf_run(string $private, string $route): void
     session_write_close(); // PDF assets/downloads must not lock concurrent session requests.
     if ($route === 'app') {
         header('Content-Type: text/html; charset=utf-8');
-        echo str_replace('{{BASE}}', $base, file_get_contents($private . '/web/private/index.html'));
+        echo pdf_render_html($private . '/web/private/index.html', $base, [
+            $private . '/web/public/style.css', $private . '/web/private/workspace.css',
+            $private . '/web/private/workspace.js',
+        ]);
         return;
     }
     if (in_array($route, ['engine', 'engine-asset'], true) && defined('PDF_ENGINE_FILE')) {
