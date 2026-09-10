@@ -17,6 +17,9 @@ test("desktop landing, workspace search, favorites, dialogs and logout", async (
   await expect(
     page.getByRole("heading", { name: "Hoş geldiniz." }),
   ).toBeVisible();
+  await expect(page.locator(".landing-footer")).toContainText(
+    "Beykoz Üniversitesi Bilgi İşlem Direktörlüğü",
+  );
   await page.screenshot({
     path: "test-results/login-desktop.png",
     fullPage: true,
@@ -25,6 +28,14 @@ test("desktop landing, workspace search, favorites, dialogs and logout", async (
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.press("Escape");
   await signIn(page);
+  await expect(page.locator(".workspace-footer")).toContainText(
+    "Beykoz Üniversitesi Bilgi İşlem Direktörlüğü",
+  );
+  await page.getByRole("button", { name: "Uygulama hakkında" }).click();
+  await expect(
+    page.getByRole("link", { name: /Kaynak kodu GitHub’da görüntüle/ }),
+  ).toHaveAttribute("href", "https://github.com/ardacetin/beykozpdf");
+  await page.keyboard.press("Escape");
   await page.screenshot({
     path: "test-results/workspace-desktop.png",
     fullPage: true,

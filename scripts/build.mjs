@@ -5,12 +5,8 @@ import {
   writeFileSync,
   mkdirSync,
   copyFileSync,
-  mkdtempSync,
-  rmSync,
-  cpSync,
 } from "node:fs";
 import path from "node:path";
-import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("../", import.meta.url));
 const base = new URL(
@@ -78,43 +74,6 @@ function visit(dir) {
 }
 visit(dist);
 mkdirSync(path.join(root, "dist"), { recursive: true });
-// Authenticated users can obtain the exact application source, including local modifications.
-const staging = mkdtempSync(path.join(tmpdir(), "pdf-source-"));
-try {
-  cpSync(root, path.join(staging, "pdf-duzenle"), {
-    recursive: true,
-    filter: (source) => {
-      const rel = path.relative(root, source);
-      if (!rel) return true;
-      return !rel
-        .split(path.sep)
-        .some(
-          (part) =>
-            [
-              ".git",
-              "node_modules",
-              "vendor",
-              "var",
-              "dist",
-              "certs",
-              "test-results",
-              "playwright-report",
-            ].includes(part) ||
-            (part.startsWith(".env") && part !== ".env.example") ||
-            part.endsWith(".log"),
-        );
-    },
-  });
-  execFileSync("tar", [
-    "-czf",
-    path.join(root, "dist/pdf-duzenle-source.tar.gz"),
-    "-C",
-    staging,
-    "pdf-duzenle",
-  ]);
-} finally {
-  rmSync(staging, { recursive: true, force: true });
-}
 writeFileSync(
   path.join(root, "dist/build.json"),
   JSON.stringify({ base, builtAt: new Date().toISOString() }),

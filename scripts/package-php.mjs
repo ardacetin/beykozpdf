@@ -8,7 +8,6 @@ const release = path.join(root, 'dist/php-release');
 const publicDir = path.join(release, 'htdocs/my.beykoz.edu.tr/pdf');
 const privateDir = path.join(release, 'pdf-duzenle-private');
 if (!existsSync(path.join(root, 'vendor/autoload.php'))) throw new Error('Önce composer install --no-dev çalıştırın.');
-if (!existsSync(path.join(root, 'dist/pdf-duzenle-source.tar.gz'))) throw new Error('Önce npm run build çalıştırın.');
 rmSync(release, { recursive: true, force: true });
 mkdirSync(publicDir, { recursive: true });
 mkdirSync(privateDir, { recursive: true });
@@ -16,7 +15,6 @@ cpSync(path.join(root, 'php'), path.join(privateDir, 'php'), { recursive: true }
 cpSync(path.join(root, 'vendor'), path.join(privateDir, 'vendor'), { recursive: true });
 cpSync(path.join(root, 'web'), path.join(privateDir, 'web'), { recursive: true });
 cpSync(path.join(root, '.env.example'), path.join(privateDir, '.env.example'));
-cpSync(path.join(root, 'dist/pdf-duzenle-source.tar.gz'), path.join(privateDir, 'source.tar.gz'));
 mkdirSync(path.join(privateDir, 'certs'));
 cpSync(path.join(root, 'php/public/index.php'), path.join(publicDir, 'index.php'));
 for (const [file, route] of Object.entries({

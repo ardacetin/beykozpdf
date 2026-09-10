@@ -228,7 +228,7 @@ $("#help").onclick = () =>
   );
 $("#about").onclick = () =>
   showInfo(
-    `<span class="eyebrow">BEYKOZ ÜNİVERSİTESİ</span><h2>PDF Düzenle</h2><p>Üniversite hesabınızla erişebildiğiniz, belgelerinizi cihazınızda işleyen PDF çalışma alanınız.</p><p>UlakPDF ve BentoPDF temel alınarak hazırlanmıştır. BentoPDF motoru AGPL-3.0 lisanslıdır. Uygulama kaynak kodu, yerel değişiklikler ve lisanslar aşağıdaki arşivde bulunur.</p><p><a class="primary" href="${base}/source.php">Kaynak kod ve lisansları indir ↗</a></p><p>Oturum çerezi en fazla 8 saat saklanır. Favori araçlar yalnızca bu tarayıcıda tutulur. PDF dosyaları sunucuya gönderilmez.</p>`,
+    '<span class="eyebrow">BEYKOZ ÜNİVERSİTESİ</span><h2>PDF Düzenle</h2><p>Üniversite hesabınızla erişebildiğiniz, belgelerinizi cihazınızda işleyen PDF çalışma alanınız.</p><p>UlakPDF ve BentoPDF temel alınarak hazırlanmıştır. BentoPDF motoru AGPL-3.0 lisanslıdır. Uygulama kaynak kodu, yerel değişiklikler ve lisanslar GitHub deposunda bulunur.</p><p><a class="primary" href="https://github.com/ardacetin/beykozpdf" target="_blank" rel="noopener noreferrer">Kaynak kodu GitHub’da görüntüle ↗</a></p><p>Oturum çerezi en fazla 8 saat saklanır. Favori araçlar yalnızca bu tarayıcıda tutulur. PDF dosyaları sunucuya gönderilmez.</p>',
   );
 for (const button of dialog.querySelectorAll(".dialog-close,.dialog-ok"))
   button.onclick = () => dialog.close();

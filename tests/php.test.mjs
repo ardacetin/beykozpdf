@@ -56,6 +56,7 @@ test('release contains PHP entry points and no runtime service configuration', (
     assert.ok(statSync(path.join(release, file)).isFile(), file);
   }
   assert.equal(readdirSync(release).includes('ecosystem.config.cjs'), false);
+  assert.equal(readdirSync(path.join(release, 'pdf-duzenle-private')).includes('source.tar.gz'), false);
   assert.match(readFileSync(path.join(release, 'htdocs/my.beykoz.edu.tr/pdf/app.php'), 'utf8'), /PDF_ROUTE.*app/);
 });
 

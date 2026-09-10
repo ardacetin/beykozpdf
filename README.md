@@ -47,4 +47,4 @@ ZIP'i `/home/beykoz-my` altında açtığınızda `htdocs/my.beykoz.edu.tr/pdf/`
 
 ## Kaynak ve lisans
 
-Uygulama GPL-3.0, BentoPDF motoru AGPL-3.0 kapsamındadır. Giriş yapan kullanıcılar kullanılan kaynak arşivini uygulamadaki **Hakkında** ekranından indirebilir. Ayrıntılar `LICENSE`, `LICENSE-AGPL` ve `THIRD_PARTY_NOTICES.md` dosyalarındadır.
+Uygulama GPL-3.0, BentoPDF motoru AGPL-3.0 kapsamındadır. **Hakkında** ekranındaki bağlantı doğrudan [GitHub kaynak deposunu](https://github.com/ardacetin/beykozpdf) açar. Ayrıntılar `LICENSE`, `LICENSE-AGPL` ve `THIRD_PARTY_NOTICES.md` dosyalarındadır.

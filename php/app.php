@@ -240,10 +240,7 @@ function pdf_run(string $private, string $route): void
         return;
     }
     if ($route === 'source') {
-        header('Content-Type: application/gzip');
-        header('Content-Disposition: attachment; filename="pdf-duzenle-source.tar.gz"');
-        readfile($private . '/source.tar.gz');
-        return;
+        pdf_redirect('https://github.com/ardacetin/beykozpdf');
     }
     pdf_fail(404, 'Sayfa bulunamadı.');
 }
