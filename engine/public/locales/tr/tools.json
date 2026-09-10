@@ -263,11 +263,37 @@
   },
   "pdfToJpg": {
     "name": "PDF'den JPG'ye",
-    "subtitle": "Her PDF sayfasını JPG görseline dönüştürün."
+    "subtitle": "Her PDF sayfasını JPG görseline dönüştürün.",
+    "imageQuality": "Görsel Kalitesi",
+    "imageQualityExplanation": "Daha yüksek kalite, daha büyük dosya boyutu oluşturur",
+    "alert": {
+      "invalidFile": "Geçersiz Dosya",
+      "invalidFileExplanation": "Lütfen bir PDF dosyası yükleyin.",
+      "noFile": "Dosya Yok",
+      "noFileExplanation": "Önce bir PDF dosyası yükleyin.",
+      "conversionSuccess": "PDF başarıyla JPG görsellerine dönüştürüldü!",
+      "conversionError": "PDF, JPG'ye dönüştürülemedi. Dosya bozuk olabilir."
+    },
+    "loader": {
+      "converting": "JPG'ye dönüştürülüyor..."
+    }
   },
   "pdfToPng": {
     "name": "PDF'den PNG'ye",
-    "subtitle": "Her PDF sayfasını PNG görseline dönüştürün."
+    "subtitle": "Her PDF sayfasını PNG görseline dönüştürün.",
+    "imageScale": "Görsel Ölçeği",
+    "imageScaleExplanation": "Daha yüksek ölçek daha iyi kalite ve daha büyük dosya oluşturur",
+    "alert": {
+      "invalidFile": "Geçersiz Dosya",
+      "invalidFileExplanation": "Lütfen bir PDF dosyası yükleyin.",
+      "noFile": "Dosya Yok",
+      "noFileExplanation": "Önce bir PDF dosyası yükleyin.",
+      "conversionSuccess": "PDF başarıyla PNG görsellerine dönüştürüldü!",
+      "conversionError": "PDF, PNG'ye dönüştürülemedi. Dosya bozuk olabilir."
+    },
+    "loader": {
+      "converting": "PNG'ye dönüştürülüyor..."
+    }
   },
   "pdfToWebp": {
     "name": "PDF'den WebP'ye",
@@ -512,22 +538,22 @@
     "convertButton": "Convert to PDF"
   },
   "wordToPdf": {
-    "name": "Word to PDF",
-    "subtitle": "Convert Word documents (DOCX, DOC, ODT, RTF) to PDF format. Supports multiple files.",
-    "acceptedFormats": "DOCX, DOC, ODT, RTF files",
-    "convertButton": "Convert to PDF"
+    "name": "Word'den PDF'ye",
+    "subtitle": "Word belgelerini (DOCX, DOC, ODT, RTF) PDF biçimine dönüştürün. Birden fazla dosya desteklenir.",
+    "acceptedFormats": "DOCX, DOC, ODT ve RTF dosyaları",
+    "convertButton": "PDF'ye Dönüştür"
   },
   "excelToPdf": {
-    "name": "Excel to PDF",
-    "subtitle": "Convert Excel spreadsheets (XLSX, XLS, ODS, CSV) to PDF format. Supports multiple files.",
-    "acceptedFormats": "XLSX, XLS, ODS, CSV files",
-    "convertButton": "Convert to PDF"
+    "name": "Excel'den PDF'ye",
+    "subtitle": "Excel çalışma tablolarını (XLSX, XLS, ODS, CSV) PDF biçimine dönüştürün. Birden fazla dosya desteklenir.",
+    "acceptedFormats": "XLSX, XLS, ODS ve CSV dosyaları",
+    "convertButton": "PDF'ye Dönüştür"
   },
   "powerpointToPdf": {
-    "name": "PowerPoint to PDF",
-    "subtitle": "Convert PowerPoint presentations (PPTX, PPT, ODP) to PDF format. Supports multiple files.",
-    "acceptedFormats": "PPTX, PPT, ODP files",
-    "convertButton": "Convert to PDF"
+    "name": "PowerPoint'ten PDF'ye",
+    "subtitle": "PowerPoint sunumlarını (PPTX, PPT, ODP) PDF biçimine dönüştürün. Birden fazla dosya desteklenir.",
+    "acceptedFormats": "PPTX, PPT ve ODP dosyaları",
+    "convertButton": "PDF'ye Dönüştür"
   },
   "markdownToPdf": {
     "name": "Markdown to PDF",

@@ -182,3 +182,36 @@ test("PDF.js tools load, split and convert a real PDF to JPG and PNG", async ({
     "1 pages",
   );
 });
+
+test("tool controls, help copy and messages are localized in Turkish", async ({
+  page,
+}) => {
+  await signIn(page);
+  const cases = [
+    ["compress-pdf", "Sıkıştırma Algoritması", "Compression Algorithm"],
+    ["split-pdf", "Bölme Modu", "Split Mode"],
+    ["word-to-pdf", "Word'den PDF'ye", "Word to PDF"],
+    ["ocr-pdf", "Belgedeki Diller", "Languages in Document"],
+    ["edit-metadata", "Belge Bilgilerini Düzenle", "Edit Metadata"],
+  ];
+
+  for (const [tool, translated, english] of cases) {
+    await page.goto(`/pdf/app.php?tool=${tool}`);
+    const frame = page.frameLocator("#engine-frame");
+    await expect(frame.locator("#tool-uploader")).toContainText(translated);
+    await expect(frame.locator("#tool-uploader")).not.toContainText(english);
+  }
+
+  await page.goto("/pdf/app.php?tool=ocr-pdf");
+  const ocrFrame = page.frameLocator("#engine-frame");
+  await expect(ocrFrame.locator("#lang-list")).toContainText("İngilizce");
+  await expect(ocrFrame.locator("#lang-list")).toContainText("Türkçe");
+
+  await page.goto("/pdf/app.php?tool=compress-pdf");
+  const compressFrame = page.frameLocator("#engine-frame");
+  await compressFrame.locator("#process-btn").dispatchEvent("click");
+  await expect(compressFrame.locator("#alert-title")).toHaveText("Dosya Yok");
+  await expect(compressFrame.locator("#alert-message")).toHaveText(
+    "Lütfen en az bir PDF dosyası seçin.",
+  );
+});

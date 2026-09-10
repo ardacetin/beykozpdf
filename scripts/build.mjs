@@ -43,7 +43,7 @@ copyFileSync(
 );
 writeFileSync(
   path.join(dist, "beykoz-theme.js"),
-  `document.documentElement.classList.add('theme-light');document.documentElement.lang='tr';localStorage.setItem('i18nextLng','tr');`,
+  `document.documentElement.classList.add('theme-light');\n${readFileSync(path.join(root, "engine/overlay/beykoz-tr.js"), "utf8")}`,
 );
 function visit(dir) {
   for (const file of readdirSync(dir, { withFileTypes: true })) {
