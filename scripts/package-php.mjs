@@ -15,7 +15,6 @@ mkdirSync(privateDir, { recursive: true });
 cpSync(path.join(root, 'php'), path.join(privateDir, 'php'), { recursive: true });
 cpSync(path.join(root, 'vendor'), path.join(privateDir, 'vendor'), { recursive: true });
 cpSync(path.join(root, 'web'), path.join(privateDir, 'web'), { recursive: true });
-cpSync(path.join(root, '.env.example'), path.join(privateDir, '.env'));
 cpSync(path.join(root, '.env.example'), path.join(privateDir, '.env.example'));
 cpSync(path.join(root, 'dist/pdf-duzenle-source.tar.gz'), path.join(privateDir, 'source.tar.gz'));
 mkdirSync(path.join(privateDir, 'certs'));
@@ -37,12 +36,17 @@ const workerNames = [...new Set(files.filter(f => f.startsWith(`workers${path.se
 function rewriteLinks(text) {
   for (const name of htmlNames) text = text.replaceAll(name, name.slice(0, -5) + '.php');
   for (const name of workerNames) text = text.replaceAll(name, name.slice(0, -3) + '.php');
+  // CloudPanel's default Nginx MIME map serves .mjs as
+  // application/octet-stream. Module scripts/workers are rejected by browsers
+  // with that MIME type, so publish the same ES modules with a .js extension.
+  text = text.replaceAll('.mjs', '.js');
   return text;
 }
 for (const rel of files) {
   if (rel.endsWith('.map')) continue;
   const src = path.join(engine, rel);
-  const target = path.join(publicDir, 'engine', rel);
+  const publishedRel = rel.endsWith('.mjs') ? rel.slice(0, -4) + '.js' : rel;
+  const target = path.join(publicDir, 'engine', publishedRel);
   mkdirSync(path.dirname(target), { recursive: true });
   if (rel.endsWith('.html')) {
     const hidden = path.join(privateDir, 'engine-pages', rel);

@@ -17,7 +17,7 @@ npm test
 npm run test:e2e
 ```
 
-Çıktı: `dist/pdf-duzenle-php.zip`. ZIP, sunucuda derleme veya Composer çalıştırma gerektirmez.
+Çıktı: `dist/pdf-duzenle-php.zip`. ZIP, sunucuda derleme veya Composer çalıştırma gerektirmez. Paket yalnızca `.env.example` içerir; güncellemeler canlı `.env` ve sertifika dosyalarının üzerine yazmaz.
 
 ## Public dizini hangisi?
 

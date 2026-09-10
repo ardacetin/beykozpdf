@@ -23,6 +23,13 @@ chmod 700 /home/beykoz-my/pdf-duzenle-private/certs
 
 PHP-FPM site kullanıcısı özel dizini okuyabilmeli ve `var/` dizinine yazabilmelidir. Paket site kullanıcısıyla açıldığında izinler buna uygundur.
 
+İlk kurulumda örnek yapılandırmayı kopyalayın. Güncelleme paketleri canlı `.env`, sertifika ve oturum dosyalarını içermez veya bunların üzerine yazmaz:
+
+```sh
+cd /home/beykoz-my/pdf-duzenle-private
+test -f .env || cp .env.example .env
+```
+
 ## CloudPanel vhost
 
 Paylaşılan standart PHP vhost yapısı yeterlidir. Daha önce Node sürümü için eklenen aşağıdaki kuralları kaldırın:
@@ -33,6 +40,8 @@ location ^~ /pdf/ { proxy_pass http://127.0.0.1:3000; ... }
 ```
 
 Mevcut genel `location /`, Varnish ve 8080 PHP-FPM bloklarını değiştirmeyin. `/pdf/index.php` standart PHP akışında çalışır. PHP sürümü `.php` uzantılı açık uçlar kullandığı için ek rewrite kuralına ihtiyaç duymaz.
+
+Dağıtım paketi ES modüllerini `.js` uzantısıyla yayınlar. Bu, CloudPanel'in varsayılan Nginx MIME eşlemesinde PDF.js worker dosyalarının tarayıcı tarafından reddedilmesini önler. Kaynaktaki `engine/dist` dizinini doğrudan sunucuya kopyalamayın; `dist/pdf-duzenle-php.zip` içindeki hazırlanmış `engine/` dizinini kullanın.
 
 CloudPanel site ayarından PHP **8.2 veya üstünü** seçin. Gerekli uzantılar: DOM/XML, OpenSSL, mbstring ve zlib.
 

@@ -52,9 +52,21 @@ test('release contains PHP entry points and no runtime service configuration', (
     'htdocs/my.beykoz.edu.tr/pdf/metadata.php',
     'htdocs/my.beykoz.edu.tr/pdf/engine/merge-pdf.php',
     'htdocs/my.beykoz.edu.tr/pdf/engine/workers/merge.worker.php',
-    'pdf-duzenle-private/vendor/autoload.php', 'pdf-duzenle-private/.env']) {
+    'pdf-duzenle-private/vendor/autoload.php', 'pdf-duzenle-private/.env.example']) {
     assert.ok(statSync(path.join(release, file)).isFile(), file);
   }
   assert.equal(readdirSync(release).includes('ecosystem.config.cjs'), false);
   assert.match(readFileSync(path.join(release, 'htdocs/my.beykoz.edu.tr/pdf/app.php'), 'utf8'), /PDF_ROUTE.*app/);
+});
+
+test('release publishes browser modules with CloudPanel-compatible JS paths', () => {
+  const engineDir = path.join(root, 'dist/php-release/htdocs/my.beykoz.edu.tr/pdf/engine');
+  const files = readdirSync(engineDir, { recursive: true, withFileTypes: true })
+    .filter(entry => entry.isFile())
+    .map(entry => path.relative(engineDir, path.join(entry.parentPath, entry.name)));
+  assert.equal(files.some(file => file.endsWith('.mjs')), false);
+  assert.ok(files.some(file => /^assets\/pdf\.worker\.min-.+\.js$/.test(file)));
+  for (const file of files.filter(file => /\.(?:js|php)$/.test(file))) {
+    assert.doesNotMatch(readFileSync(path.join(engineDir, file), 'utf8'), /\.mjs\b/, file);
+  }
 });
