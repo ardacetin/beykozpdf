@@ -24,6 +24,8 @@ execFileSync("npm", ["run", "build:docker", "--prefix", "engine"], {
     VITE_BRAND_NAME: "PDF Düzenle",
     VITE_BRAND_LOGO: "beykoz-brand.svg",
     VITE_FOOTER_TEXT: "Beykoz Üniversitesi · PDF Düzenle",
+    VITE_LIBREOFFICE_SCRIPT_EXTENSION: "php",
+    VITE_LIBREOFFICE_BINARY_EXTENSION: "php",
     NODE_OPTIONS: "--max-old-space-size=6144",
     VITE_WASM_PYMUPDF_URL:
       "https://cdn.jsdelivr.net/npm/@bentopdf/pymupdf-wasm@0.11.16/",

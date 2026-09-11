@@ -32,6 +32,14 @@ const files = readdirSync(engine, { recursive: true, withFileTypes: true }).filt
   .map(f => path.relative(engine, path.join(f.parentPath, f.name)));
 const htmlNames = [...new Set(files.filter(f => f.endsWith('.html')).map(f => path.basename(f)))];
 const workerNames = [...new Set(files.filter(f => f.startsWith(`workers${path.sep}`) && f.endsWith('.js')).map(f => path.basename(f)))];
+const protectedEngineAssets = new Set([
+  ...files.filter(f => f.startsWith(`workers${path.sep}`) && f.endsWith('.js')),
+  path.join('libreoffice-wasm', 'browser.worker.global.js'),
+  path.join('libreoffice-wasm', 'soffice.js'),
+  path.join('libreoffice-wasm', 'soffice.worker.js'),
+  path.join('libreoffice-wasm', 'soffice.wasm.gz'),
+  path.join('libreoffice-wasm', 'soffice.data.gz'),
+]);
 function versionJavaScriptLinks(text) {
   // Vite's entry modules import hashed chunks, but Cloudflare can retain an
   // older response under the same hashed URL after the packaging rewrites
@@ -69,12 +77,13 @@ for (const rel of files) {
     writeFileSync(hidden, rewriteHtml(readFileSync(src, 'utf8')));
     const depth = rel.split(path.sep).length;
     writeFileSync(target.slice(0, -5) + '.php', `<?php\ndeclare(strict_types=1);\ndefine('PDF_ROUTE', 'engine');\ndefine('PDF_ENGINE_FILE', '${rel}');\nrequire dirname(__DIR__, ${depth}) . '/index.php';\n`);
-  } else if (rel.startsWith(`workers${path.sep}`) && rel.endsWith('.js')) {
+  } else if (protectedEngineAssets.has(rel)) {
     const hidden = path.join(privateDir, 'engine-assets', rel);
     mkdirSync(path.dirname(hidden), { recursive: true });
-    writeFileSync(hidden, rewriteLinks(readFileSync(src, 'utf8')));
+    if (rel.endsWith('.js')) writeFileSync(hidden, rewriteLinks(readFileSync(src, 'utf8')));
+    else cpSync(src, hidden);
     const depth = rel.split(path.sep).length;
-    writeFileSync(target.slice(0, -3) + '.php', `<?php\ndeclare(strict_types=1);\ndefine('PDF_ROUTE', 'engine-asset');\ndefine('PDF_ENGINE_FILE', '${rel}');\nrequire dirname(__DIR__, ${depth}) . '/index.php';\n`);
+    writeFileSync(target.replace(/\.(?:js|gz)$/, '.php'), `<?php\ndeclare(strict_types=1);\ndefine('PDF_ROUTE', 'engine-asset');\ndefine('PDF_ENGINE_FILE', '${rel}');\nrequire dirname(__DIR__, ${depth}) . '/index.php';\n`);
   } else if (/\.(?:m?js|css)$/.test(rel)) {
     writeFileSync(target, rewriteLinks(readFileSync(src, 'utf8')));
   } else cpSync(src, target);

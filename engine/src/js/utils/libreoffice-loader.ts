@@ -9,6 +9,10 @@ import { WorkerBrowserConverter } from '@matbee/libreoffice-converter/browser';
 import type { InputFormat } from '@matbee/libreoffice-converter/browser';
 
 const LIBREOFFICE_LOCAL_PATH = import.meta.env.BASE_URL + 'libreoffice-wasm/';
+const LIBREOFFICE_SCRIPT_EXTENSION =
+  import.meta.env.VITE_LIBREOFFICE_SCRIPT_EXTENSION || 'js';
+const LIBREOFFICE_BINARY_EXTENSION =
+  import.meta.env.VITE_LIBREOFFICE_BINARY_EXTENSION || 'gz';
 
 export interface LoadProgress {
   phase: 'loading' | 'initializing' | 'converting' | 'complete' | 'ready';
@@ -52,11 +56,11 @@ export class LibreOfficeConverter {
       });
 
       this.converter = new WorkerBrowserConverter({
-        sofficeJs: `${this.basePath}soffice.js`,
-        sofficeWasm: `${this.basePath}soffice.wasm.gz`,
-        sofficeData: `${this.basePath}soffice.data.gz`,
-        sofficeWorkerJs: `${this.basePath}soffice.worker.js`,
-        browserWorkerJs: `${this.basePath}browser.worker.global.js`,
+        sofficeJs: `${this.basePath}soffice.${LIBREOFFICE_SCRIPT_EXTENSION}`,
+        sofficeWasm: `${this.basePath}soffice.wasm.${LIBREOFFICE_BINARY_EXTENSION}`,
+        sofficeData: `${this.basePath}soffice.data.${LIBREOFFICE_BINARY_EXTENSION}`,
+        sofficeWorkerJs: `${this.basePath}soffice.worker.${LIBREOFFICE_SCRIPT_EXTENSION}`,
+        browserWorkerJs: `${this.basePath}browser.worker.global.${LIBREOFFICE_SCRIPT_EXTENSION}`,
         verbose: false,
         onProgress: (info: {
           phase: string;

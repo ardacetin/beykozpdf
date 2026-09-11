@@ -43,6 +43,8 @@ Mevcut genel `location /`, Varnish ve 8080 PHP-FPM bloklarını değiştirmeyin.
 
 Dağıtım paketi ES modüllerini `.js` uzantısıyla yayınlar. Bu, CloudPanel'in varsayılan Nginx MIME eşlemesinde PDF.js worker dosyalarının tarayıcı tarafından reddedilmesini önler. Araç giriş dosyalarına paket sürümü eklenir; yeni dağıtım sonrasında Cloudflare veya tarayıcı eski worker yolunu kullanmaz. Kaynaktaki `engine/dist` dizinini doğrudan sunucuya kopyalamayın; `dist/pdf-duzenle-php.zip` içindeki hazırlanmış `engine/` dizinini kullanın.
 
+Word, Excel, PowerPoint ve diğer ofis belgesi dönüşümleri için gereken LibreOffice worker, WebAssembly ve veri dosyaları paket tarafından oturum denetimli PHP uçlarından sunulur. Bu uçlar gerekli izolasyon, MIME ve gzip başlıklarını kendileri gönderir; vhost'a worker ya da WebAssembly kuralı eklemeyin.
+
 CloudPanel site ayarından PHP **8.2 veya üstünü** seçin. Gerekli uzantılar: DOM/XML, OpenSSL, mbstring ve zlib.
 
 ## Yapılandırma

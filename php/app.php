@@ -243,13 +243,25 @@ function pdf_run(string $private, string $route): void
     if (in_array($route, ['engine', 'engine-asset'], true) && defined('PDF_ENGINE_FILE')) {
         // Constant originates only in generated PHP entry points, never in request parameters.
         $directory = $route === 'engine' ? 'engine-pages' : 'engine-assets';
-        $extension = $route === 'engine' ? '.html' : '.js';
         $root = realpath($private . '/' . $directory);
         $file = realpath($private . '/' . $directory . '/' . PDF_ENGINE_FILE);
-        if (!$root || !$file || !str_starts_with($file, $root . '/') || !str_ends_with($file, $extension)) {
+        $assetType = match (true) {
+            $route === 'engine' && str_ends_with(PDF_ENGINE_FILE, '.html') => 'html',
+            $route === 'engine-asset' && str_ends_with(PDF_ENGINE_FILE, '.js') => 'javascript',
+            $route === 'engine-asset' && str_ends_with(PDF_ENGINE_FILE, '.wasm.gz') => 'wasm-gzip',
+            $route === 'engine-asset' && str_ends_with(PDF_ENGINE_FILE, '.data.gz') => 'data-gzip',
+            default => null,
+        };
+        if (!$root || !$file || !$assetType || !str_starts_with($file, $root . '/')) {
             pdf_fail(404, 'Araç bulunamadı.');
         }
-        header('Content-Type: ' . ($route === 'engine' ? 'text/html' : 'application/javascript') . '; charset=utf-8');
+        header('Content-Type: ' . match ($assetType) {
+            'html' => 'text/html; charset=utf-8',
+            'javascript' => 'application/javascript; charset=utf-8',
+            'wasm-gzip' => 'application/wasm',
+            'data-gzip' => 'application/octet-stream',
+        });
+        if (str_ends_with($assetType, '-gzip')) header('Content-Encoding: gzip');
         readfile($file);
         return;
     }

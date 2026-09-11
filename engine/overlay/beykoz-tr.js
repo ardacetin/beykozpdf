@@ -247,6 +247,7 @@
     'Success': 'Başarılı',
     'Error': 'Hata',
     'Conversion Error': 'Dönüştürme Hatası',
+    'Conversion Complete': 'Dönüştürme Tamamlandı',
     'Compression Complete': 'Sıkıştırma Tamamlandı',
     'Compression Finished': 'Sıkıştırma Sonuçlandı',
     'Encryption Failed': 'Şifreleme Başarısız',
@@ -320,6 +321,11 @@
     [/^Extracted (\d+) page\(s\) successfully!$/, (_m, count) => `${count} sayfa başarıyla çıkarıldı.`],
     [/^PDF split into (\d+) files successfully!$/, (_m, count) => `PDF başarıyla ${count} dosyaya bölündü.`],
     [/^Processed (\d+) PDFs\.$/, (_m, count) => `${count} PDF işlendi.`],
+    [/^Successfully converted (.+) to PDF\.$/, (_m, file) => `${file} başarıyla PDF'ye dönüştürüldü.`],
+    [/^Successfully converted (\d+) Word document\(s\) to PDF\.$/, (_m, count) => `${count} Word belgesi başarıyla PDF'ye dönüştürüldü.`],
+    [/^Successfully converted (\d+) Excel file\(s\) to PDF\.$/, (_m, count) => `${count} Excel dosyası başarıyla PDF'ye dönüştürüldü.`],
+    [/^Successfully converted (\d+) PowerPoint file\(s\) to PDF\.$/, (_m, count) => `${count} PowerPoint dosyası başarıyla PDF'ye dönüştürüldü.`],
+    [/^An error occurred during conversion\. Error: (.+)$/, (_m, error) => `Dönüştürme sırasında bir hata oluştu: ${error}`],
     [/^Status: (.+)$/, (_m, status) => `Durum: ${status}`]
   ];
 
