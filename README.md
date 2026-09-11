@@ -1,50 +1,95 @@
-# PDF Düzenle — Beykoz Üniversitesi
+# PDF Düzenle
 
-Beykoz Üniversitesi için, `https://my.beykoz.edu.tr/pdf/` altında çalışan özel PDF çalışma alanı. Arayüz kurumsal **#7A232C** rengiyle hazırlanmıştır. PDF işlemleri BentoPDF motoruyla kullanıcının tarayıcısında yapılır; belgeler sunucuya yüklenmez.
+**PDF Düzenle**, Beykoz Üniversitesi mensuplarının belge işlemlerini kolayca tamamlayabilmesi için hazırlanmış kurumsal PDF çalışma alanıdır. PDF birleştirme, bölme, sıkıştırma, düzenleme, dönüştürme, imzalama ve metin tanıma gibi sık kullanılan işlemleri tek bir arayüzde sunar.
 
-Canlı uygulama standart PHP-FPM ile çalışır. Node.js, PM2, Redis, Docker veya Python servisi gerekmez. Google Workspace özel SAML uygulaması ile giriş yapılır ve yalnızca tam `@beykoz.edu.tr` alanındaki hesaplar kabul edilir.
+Uygulamaya yalnızca `@beykoz.edu.tr` uzantılı Google Workspace hesabıyla giriş yapılabilir.
 
-## Hazır PHP paketini oluşturma
+## Nasıl kullanılır?
 
-Node.js yalnızca geliştirici bilgisayarında ön yüzü derlemek için kullanılır:
+1. **Google Workspace ile giriş yap** seçeneğine tıklayın.
+2. Açılan Google ekranında Beykoz Üniversitesi hesabınızı seçin.
+3. İhtiyacınız olan aracı listeden seçin veya arama alanında bulun.
+4. Belgenizi sürükleyerek ya da dosya seçiciden ekleyin.
+5. Gerekli ayarları yaptıktan sonra işlemi başlatın.
+6. Hazırlanan dosyayı cihazınıza indirin.
 
-```sh
-npm ci
-npm run install:engine
-composer install --no-dev --prefer-dist
-npm run build
-npm test
-npm run test:e2e
-```
+Sık kullandığınız bir aracın yıldız simgesine tıklayarak onu **Favorilerim** bölümüne ekleyebilirsiniz. Favoriler yalnızca kullandığınız tarayıcıda saklanır.
 
-Çıktı: `dist/pdf-duzenle-php.zip`. ZIP, sunucuda derleme veya Composer çalıştırma gerektirmez. Paket yalnızca `.env.example` içerir; güncellemeler canlı `.env` ve sertifika dosyalarının üzerine yazmaz.
+## Kullanılabilir araçlar
 
-## Public dizini hangisi?
+### PDF düzenleme
 
-Canlı sunucuda uygulamanın public dizini şudur:
+- **PDF birleştir:** Birden fazla PDF belgesini tek dosyada toplar.
+- **PDF böl:** Belgeyi seçilen sayfalara veya aralıklara göre ayırır.
+- **PDF düzenle:** Belgeye metin, şekil ve açıklama ekler.
+- **Sayfaları döndür:** Yanlış yöndeki sayfaları çevirir.
+- **Sayfaları sırala:** Sayfaların sırasını sürükleyerek değiştirir.
+- **Sayfa sil:** İstenmeyen sayfaları belgeden kaldırır.
+- **Sayfa çıkar:** Seçilen sayfalardan yeni bir PDF oluşturur.
+- **Sayfa numarası ekle:** Belgeye otomatik sayfa numaraları yerleştirir.
+- **PDF kırp:** Sayfa kenarlarını ve görünür alanı düzenler.
 
-```text
-/home/beykoz-my/htdocs/my.beykoz.edu.tr/pdf/
-```
+### Dosya dönüştürme
 
-Bu dizinde `index.php`, diğer PHP giriş dosyaları, `public/`, `app-assets/` ve `engine/` bulunur. CloudPanel'in ana site kökü `/home/beykoz-my/htdocs/my.beykoz.edu.tr` olarak kalır; yalnızca onun altındaki `pdf/` uygulamanın public dizinidir.
+- **Görselden PDF’e:** JPG görsellerini PDF belgesine dönüştürür.
+- **PNG’den PDF’e:** PNG görsellerini tek bir PDF içinde toplar.
+- **PDF’ten JPG’ye:** PDF sayfalarını JPG görselleri olarak kaydeder.
+- **PDF’ten PNG’ye:** PDF sayfalarını PNG görselleri olarak kaydeder.
+- **Word’den PDF’e:** Word belgelerini PDF formatına dönüştürür.
+- **Excel’den PDF’e:** Çalışma tablolarını PDF formatına dönüştürür.
+- **PowerPoint’ten PDF’e:** Sunumları PDF formatına dönüştürür.
 
-SAML kütüphanesi, gerçek HTML şablonları, ayarlar ve oturumlar public dizinin dışında tutulur:
+### Optimizasyon
 
-```text
-/home/beykoz-my/pdf-duzenle-private/
-```
+- **PDF sıkıştır:** Dosya boyutunu paylaşım ve arşivleme için küçültür.
+- **Metin tanıma (OCR):** Taranmış belgelerdeki metni aranabilir hale getirir.
+- **PDF düzleştir:** Form alanlarını ve açıklamaları sayfaya sabitler.
+- **Belge bilgilerini düzenle:** Başlık, yazar ve diğer belge özelliklerini günceller.
 
-Kaynak depodaki `php/public/index.php` public giriş dosyasının şablonudur. `npm run build`, sunucuya yüklenecek tam public ağacını `dist/php-release/htdocs/my.beykoz.edu.tr/pdf/` altında üretir.
+### Güvenlik
 
-## Canlı kurulum
+- **Filigran ekle:** Belgeye metin veya görsel filigran yerleştirir.
+- **PDF şifrele:** Belgeyi parolayla korur.
+- **Şifreyi kaldır:** Parolası bilinen bir PDF’in korumasını kaldırır.
+- **İmza ekle:** Çizilen veya görsel olarak yüklenen imzayı belgeye yerleştirir.
 
-Adım adım kurulum [CloudPanel kılavuzunda](docs/cloudpanel.md), Google alanları [SAML kılavuzunda](docs/google-workspace.md) bulunur. Özet dizinler:
+## Gizlilik
 
-ZIP'i `/home/beykoz-my` altında açtığınızda `htdocs/my.beykoz.edu.tr/pdf/` ve `pdf-duzenle-private/` doğrudan doğru konumlarına yerleşir.
+Belgeleriniz tarayıcınızda işlenir ve PDF işlemleri için sunucuya yüklenmez. Bir araçtan ayrıldığınızda seçtiğiniz dosyalar temizlenir. Oturum bilgisi en fazla 8 saat saklanır; favori araç tercihleriniz yalnızca mevcut tarayıcıda tutulur.
 
-`pdf-duzenle-private/.env` ve `certs/` web kökünün dışındadır. SAML ayarları boşken giriş sayfası çalışır; çalışma alanı açılmaz.
+İşlem sırasında belgenizi, kurum şifrenizi veya Google hesap bilgilerinizi hiç kimseyle paylaşmayın.
 
-## Kaynak ve lisans
+## Daha iyi sonuç almak için
 
-Uygulama GPL-3.0, BentoPDF motoru AGPL-3.0 kapsamındadır. **Hakkında** ekranındaki bağlantı doğrudan [GitHub kaynak deposunu](https://github.com/ardacetin/beykozpdf) açar. Ayrıntılar `LICENSE`, `LICENSE-AGPL` ve `THIRD_PARTY_NOTICES.md` dosyalarındadır.
+- Güncel bir Chrome, Edge, Firefox veya Safari sürümü kullanın.
+- Büyük dosyalarda masaüstü tarayıcısını tercih edin.
+- Dönüştürme tamamlanmadan sekmeyi kapatmayın veya sayfayı yenilemeyin.
+- Word, Excel, PowerPoint ve OCR araçları ilk kullanımda gerekli bileşenleri indirebilir; ilk işlem sonraki işlemlerden daha uzun sürebilir.
+- Tarayıcınız indirme izni sorarsa dosyanın kaydedilebilmesi için izin verin.
+- Şifreli bir PDF üzerinde işlem yapacaksanız istenen parolayı doğru girdiğinizden emin olun.
+
+## Sorun yaşarsanız
+
+**Giriş yapamıyorum**
+
+Google ekranında `@beykoz.edu.tr` uzantılı hesabınızı seçtiğinizden emin olun. Birden fazla Google hesabı açıksa üniversite hesabını özellikle seçin. Tarayıcınızda çerezlerin açık olması gerekir.
+
+**Dosya yüklenmiyor veya dönüştürme başlamıyor**
+
+Dosyanın desteklenen biçimde olduğundan ve bozuk olmadığından emin olun. Sayfayı yenileyip dosyayı yeniden seçin. Büyük dosyalarda işlemin başlaması biraz zaman alabilir.
+
+**İşlem uzun sürüyor**
+
+İnternet bağlantınızı kontrol edin ve işlem tamamlanana kadar sekmeyi açık bırakın. Özellikle Office ve OCR araçlarının ilk kullanımı ek bileşenlerin hazırlanmasını bekleyebilir.
+
+**Dosya indirilmiyor**
+
+Tarayıcının indirme engelini ve indirilenler klasörünü kontrol edin. Gerekirse ilgili site için otomatik indirmelere izin verin ve işlemi yeniden başlatın.
+
+Sorun devam ederse Beykoz Üniversitesi Bilgi İşlem birimine başvurun. Destek talebinize kullandığınız aracın adını, dosya türünü, yaklaşık dosya boyutunu ve ekranda görünen hata mesajını yazın. Belgenizi veya parolanızı destek talebine eklemeyin.
+
+## Açık kaynak ve lisanslar
+
+PDF Düzenle, [UlakPDF](https://github.com/ciari/ulakpdf) ve [BentoPDF](https://github.com/alam00000/bentopdf) temel alınarak geliştirilmiştir. Uygulamanın kaynak kodu bu depoda yayımlanır.
+
+Uygulama GPL-3.0, BentoPDF motoru AGPL-3.0 lisansı kapsamındadır. Ayrıntılar için `LICENSE`, `LICENSE-AGPL` ve `THIRD_PARTY_NOTICES.md` dosyalarını inceleyebilirsiniz.
