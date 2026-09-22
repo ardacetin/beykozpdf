@@ -694,14 +694,14 @@
     "subtitle": "Extract tables from PDF and convert to CSV format."
   },
   "pdfToExcel": {
-    "name": "PDF to Excel",
-    "subtitle": "Extract tables from PDF and convert to Excel (XLSX) format."
+    "name": "PDF'den Excel'e",
+    "subtitle": "PDF tablolarını çıkarın ve Excel (XLSX) biçimine dönüştürün."
   },
   "pdfToText": {
-    "name": "PDF to Text",
-    "subtitle": "Extract text from PDF files and save as plain text (.txt). Supports multiple files.",
-    "note": "This tool works ONLY with digitally created PDFs. For scanned documents or image-based PDFs, use our OCR PDF tool instead.",
-    "convertButton": "Extract Text"
+    "name": "PDF'den Metne",
+    "subtitle": "PDF dosyalarındaki metni çıkarıp düz metin (.txt) olarak kaydedin. Birden fazla dosya desteklenir.",
+    "note": "Bu araç yalnızca dijital olarak oluşturulmuş PDF'lerle çalışır. Taranmış veya görsel tabanlı PDF'ler için OCR PDF aracını kullanın.",
+    "convertButton": "Metni Çıkar"
   },
   "digitalSignPdf": {
     "name": "Digital Signature PDF",

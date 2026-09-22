@@ -8,7 +8,7 @@ async function signIn(page) {
     .click();
   await page.getByRole("button", { name: "Test hesabıyla devam et" }).click();
   await expect(page).toHaveURL(/\/pdf\/app\.php$/);
-  await expect(page.locator(".tool-card")).toHaveCount(25);
+  await expect(page.locator(".tool-card")).toHaveCount(35);
 }
 test("desktop landing, workspace search, favorites, dialogs and logout", async ({
   page,
@@ -32,6 +32,20 @@ test("desktop landing, workspace search, favorites, dialogs and logout", async (
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.press("Escape");
   await signIn(page);
+  for (const id of [
+    "pdf-to-excel",
+    "pdf-to-text",
+    "extract-images",
+    "repair-pdf",
+    "remove-blank-pages",
+    "deskew-pdf",
+    "compare-pdfs",
+    "form-filler",
+    "header-footer",
+    "table-of-contents",
+  ]) {
+    await expect(page.locator(`.tool-link[href="?tool=${id}"]`)).toBeVisible();
+  }
   await expect(page.locator(".workspace-footer")).toContainText(
     "Beykoz Üniversitesi Bilgi İşlem Direktörlüğü",
   );
@@ -51,7 +65,7 @@ test("desktop landing, workspace search, favorites, dialogs and logout", async (
     .locator("#filter-pills")
     .getByRole("button", { name: "Dönüştür", exact: true })
     .click();
-  await expect(page.locator(".tool-card")).toHaveCount(8);
+  await expect(page.locator(".tool-card")).toHaveCount(11);
   await expect(
     page.getByRole("link", { name: /PDF’den Word’e/ }),
   ).toBeVisible();
@@ -157,7 +171,7 @@ test("real PDF merge downloads a valid three-page PDF without file uploads", asy
     fullPage: true,
   });
   await page.getByRole("button", { name: "Tüm araçlar", exact: true }).click();
-  await expect(page.locator(".tool-card")).toHaveCount(25);
+  await expect(page.locator(".tool-card")).toHaveCount(35);
 });
 
 test("PDF.js tools load, split and convert a real PDF to JPG and PNG", async ({
@@ -204,6 +218,16 @@ test("tool controls, help copy and messages are localized in Turkish", async ({
     ["split-pdf", "Bölme Modu", "Split Mode"],
     ["word-to-pdf", "Word'den PDF'ye", "Word to PDF"],
     ["pdf-to-docx", "PDF'den Word'e", "PDF to Word"],
+    ["pdf-to-excel", "PDF'den Excel'e", "PDF to Excel"],
+    ["pdf-to-text", "PDF'den Metne", "PDF to Text"],
+    ["extract-images", "Görüntüleri Çıkar", "Extract Images"],
+    ["repair-pdf", "PDF'yi Onar", "Repair PDF"],
+    ["remove-blank-pages", "Boş Sayfaları Kaldır", "Remove Blank Pages"],
+    ["deskew-pdf", "PDF Eğriliğini Düzelt", "Deskew PDF"],
+    ["compare-pdfs", "PDF'leri Karşılaştır", "Compare PDFs"],
+    ["form-filler", "PDF Form Doldurucu", "PDF Form Filler"],
+    ["header-footer", "Üst Bilgi ve Alt Bilgi", "Header & Footer"],
+    ["table-of-contents", "İçindekiler", "Table of Contents"],
     ["ocr-pdf", "Belgedeki Diller", "Languages in Document"],
     ["edit-metadata", "Belge Bilgilerini Düzenle", "Edit Metadata"],
   ];
@@ -227,4 +251,40 @@ test("tool controls, help copy and messages are localized in Turkish", async ({
   await expect(compressFrame.locator("#alert-message")).toHaveText(
     "Lütfen en az bir PDF dosyası seçin.",
   );
+});
+
+test("new tool screens accept real PDF files", async ({ page }) => {
+  test.setTimeout(120_000);
+  await signIn(page);
+  const document = await PDFDocument.create();
+  document.addPage([595, 842]);
+  const input = {
+    name: "beykoz-arac-testi.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from(await document.save()),
+  };
+  const cases = [
+    ["pdf-to-excel", "#options-panel"],
+    ["pdf-to-text", "#extract-options"],
+    ["extract-images", "#extract-options"],
+    ["repair-pdf", "#process-btn"],
+    ["remove-blank-pages", "#options-panel"],
+    ["deskew-pdf", "#deskew-options"],
+    ["form-filler", "#form-filler-options"],
+    ["header-footer", "#options-panel"],
+    ["table-of-contents", "#file-display-area"],
+  ];
+
+  for (const [tool, readySelector] of cases) {
+    await page.goto(`/pdf/app.php?tool=${tool}`);
+    const frame = page.frameLocator("#engine-frame");
+    await frame.locator("#file-input").setInputFiles(input);
+    await expect(frame.locator(readySelector)).toBeVisible();
+  }
+
+  await page.goto("/pdf/app.php?tool=compare-pdfs");
+  const compareFrame = page.frameLocator("#engine-frame");
+  await compareFrame.locator("#file-input-1").setInputFiles(input);
+  await compareFrame.locator("#file-input-2").setInputFiles(input);
+  await expect(compareFrame.locator("#compare-viewer")).toBeVisible();
 });

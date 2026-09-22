@@ -22,6 +22,11 @@ Sık kullandığınız bir aracın yıldız simgesine tıklayarak onu **Favorile
 - **PDF birleştir:** Birden fazla PDF belgesini tek dosyada toplar.
 - **PDF böl:** Belgeyi seçilen sayfalara veya aralıklara göre ayırır.
 - **PDF düzenle:** Belgeye metin, şekil ve açıklama ekler.
+- **PDF form doldur:** Doldurulabilir PDF formlarını tarayıcıda tamamlar.
+- **Üst bilgi ve alt bilgi:** Sayfalara kurumsal üst ve alt metinler ekler.
+- **İçindekiler oluştur:** PDF yer imlerinden içindekiler sayfası üretir.
+- **Boş sayfaları kaldır:** Belgedeki boş sayfaları otomatik olarak temizler.
+- **PDF karşılaştır:** İki PDF belgesini yan yana karşılaştırır.
 - **Sayfaları döndür:** Yanlış yöndeki sayfaları çevirir.
 - **Sayfaları sırala:** Sayfaların sırasını sürükleyerek değiştirir.
 - **Sayfa sil:** İstenmeyen sayfaları belgeden kaldırır.
@@ -36,6 +41,9 @@ Sık kullandığınız bir aracın yıldız simgesine tıklayarak onu **Favorile
 - **PDF’ten JPG’ye:** PDF sayfalarını JPG görselleri olarak kaydeder.
 - **PDF’ten PNG’ye:** PDF sayfalarını PNG görselleri olarak kaydeder.
 - **PDF’den Word’e:** PDF belgelerini düzenlenebilir Word dosyalarına dönüştürür.
+- **PDF’den Excel’e:** PDF tablolarını düzenlenebilir Excel dosyasına dönüştürür.
+- **PDF’den metne:** PDF içeriğini düz metin dosyası olarak kaydeder.
+- **Görselleri çıkar:** PDF içindeki gömülü görselleri dışa aktarır.
 - **Word’den PDF’e:** Word belgelerini PDF formatına dönüştürür.
 - **Excel’den PDF’e:** Çalışma tablolarını PDF formatına dönüştürür.
 - **PowerPoint’ten PDF’e:** Sunumları PDF formatına dönüştürür.
@@ -43,6 +51,8 @@ Sık kullandığınız bir aracın yıldız simgesine tıklayarak onu **Favorile
 ### Optimizasyon
 
 - **PDF sıkıştır:** Dosya boyutunu paylaşım ve arşivleme için küçültür.
+- **PDF onar:** Bozuk veya hasarlı PDF dosyalarındaki verileri kurtarmayı dener.
+- **Eğik PDF’yi düzelt:** Taranmış eğik sayfaları otomatik olarak hizalar.
 - **Metin tanıma (OCR):** Taranmış belgelerdeki metni aranabilir hale getirir.
 - **PDF düzleştir:** Form alanlarını ve açıklamaları sayfaya sabitler.
 - **Belge bilgilerini düzenle:** Başlık, yazar ve diğer belge özelliklerini günceller.
