@@ -61,6 +61,14 @@ export const tools = [
     color: "lilac",
   },
   {
+    id: "pdf-to-docx",
+    name: "PDF’den Word’e",
+    description: "PDF belgelerinizi düzenlenebilir Word dosyalarına dönüştürün.",
+    category: "convert",
+    icon: "file",
+    color: "blue",
+  },
+  {
     id: "rotate-pdf",
     name: "Sayfaları döndür",
     description: "Sayfalarınızı doğru yöne kolayca çevirin.",

@@ -35,6 +35,7 @@ Sık kullandığınız bir aracın yıldız simgesine tıklayarak onu **Favorile
 - **PNG’den PDF’e:** PNG görsellerini tek bir PDF içinde toplar.
 - **PDF’ten JPG’ye:** PDF sayfalarını JPG görselleri olarak kaydeder.
 - **PDF’ten PNG’ye:** PDF sayfalarını PNG görselleri olarak kaydeder.
+- **PDF’den Word’e:** PDF belgelerini düzenlenebilir Word dosyalarına dönüştürür.
 - **Word’den PDF’e:** Word belgelerini PDF formatına dönüştürür.
 - **Excel’den PDF’e:** Çalışma tablolarını PDF formatına dönüştürür.
 - **PowerPoint’ten PDF’e:** Sunumları PDF formatına dönüştürür.

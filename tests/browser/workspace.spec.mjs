@@ -8,7 +8,7 @@ async function signIn(page) {
     .click();
   await page.getByRole("button", { name: "Test hesabıyla devam et" }).click();
   await expect(page).toHaveURL(/\/pdf\/app\.php$/);
-  await expect(page.locator(".tool-card")).toHaveCount(24);
+  await expect(page.locator(".tool-card")).toHaveCount(25);
 }
 test("desktop landing, workspace search, favorites, dialogs and logout", async ({
   page,
@@ -145,7 +145,7 @@ test("real PDF merge downloads a valid three-page PDF without file uploads", asy
     fullPage: true,
   });
   await page.getByRole("button", { name: "Tüm araçlar", exact: true }).click();
-  await expect(page.locator(".tool-card")).toHaveCount(24);
+  await expect(page.locator(".tool-card")).toHaveCount(25);
 });
 
 test("PDF.js tools load, split and convert a real PDF to JPG and PNG", async ({
@@ -179,7 +179,7 @@ test("PDF.js tools load, split and convert a real PDF to JPG and PNG", async ({
   await splitFrame.locator("#file-input").setInputFiles(input);
   await expect(splitFrame.locator("#split-options")).toBeVisible();
   await expect(splitFrame.locator("#file-display-area")).toContainText(
-    "1 pages",
+    "1 sayfa",
   );
 });
 
@@ -191,6 +191,7 @@ test("tool controls, help copy and messages are localized in Turkish", async ({
     ["compress-pdf", "Sıkıştırma Algoritması", "Compression Algorithm"],
     ["split-pdf", "Bölme Modu", "Split Mode"],
     ["word-to-pdf", "Word'den PDF'ye", "Word to PDF"],
+    ["pdf-to-docx", "PDF'den Word'e", "PDF to Word"],
     ["ocr-pdf", "Belgedeki Diller", "Languages in Document"],
     ["edit-metadata", "Belge Bilgilerini Düzenle", "Edit Metadata"],
   ];

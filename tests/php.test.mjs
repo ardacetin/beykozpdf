@@ -51,6 +51,7 @@ test('release contains PHP entry points and no runtime service configuration', (
     'htdocs/my.beykoz.edu.tr/pdf/saml-acs.php',
     'htdocs/my.beykoz.edu.tr/pdf/metadata.php',
     'htdocs/my.beykoz.edu.tr/pdf/engine/merge-pdf.php',
+    'htdocs/my.beykoz.edu.tr/pdf/engine/pdf-to-docx.php',
     'htdocs/my.beykoz.edu.tr/pdf/engine/workers/merge.worker.php',
     'pdf-duzenle-private/vendor/autoload.php', 'pdf-duzenle-private/.env.example']) {
     assert.ok(statSync(path.join(release, file)).isFile(), file);
