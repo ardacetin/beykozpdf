@@ -1,5 +1,11 @@
-import { categories, tools } from "./tools.js";
-import { icon } from "./icons.js";
+const moduleVersion = new URL(import.meta.url).searchParams.get("v");
+const moduleSuffix = moduleVersion
+  ? `?v=${encodeURIComponent(moduleVersion)}`
+  : "";
+const [{ categories, tools }, { icon }] = await Promise.all([
+  import(`./tools.js${moduleSuffix}`),
+  import(`./icons.js${moduleSuffix}`),
+]);
 const base = document.documentElement.dataset.base;
 const $ = (s) => document.querySelector(s);
 let favorites;

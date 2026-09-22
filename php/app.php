@@ -236,7 +236,8 @@ function pdf_run(string $private, string $route): void
         header('Content-Type: text/html; charset=utf-8');
         echo pdf_render_html($private . '/web/private/index.html', $base, [
             $private . '/web/public/style.css', $private . '/web/private/workspace.css',
-            $private . '/web/private/workspace.js',
+            $private . '/web/private/workspace.js', $private . '/web/private/tools.js',
+            $private . '/web/private/icons.js',
         ]);
         return;
     }

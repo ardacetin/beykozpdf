@@ -47,6 +47,18 @@ test("desktop landing, workspace search, favorites, dialogs and logout", async (
     path: "test-results/workspace-desktop.png",
     fullPage: true,
   });
+  await page
+    .locator("#filter-pills")
+    .getByRole("button", { name: "Dönüştür", exact: true })
+    .click();
+  await expect(page.locator(".tool-card")).toHaveCount(8);
+  await expect(
+    page.getByRole("link", { name: /PDF’den Word’e/ }),
+  ).toBeVisible();
+  await page
+    .locator("#filter-pills")
+    .getByRole("button", { name: "Tüm araçlar", exact: true })
+    .click();
   await page.getByRole("searchbox").fill("sikistir");
   await expect(page.locator(".tool-card")).toHaveCount(1);
   await page.getByRole("searchbox").fill("bulunmayan");
