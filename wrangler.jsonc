@@ -1,0 +1,28 @@
+// Cloudflare Workers deployment of PDF Düzenle. See docs/cloudflare.md.
+// Build first (npm run build); it fills dist/cloudflare/assets.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pdf-duzenle",
+  "main": "cloudflare/worker.mjs",
+  "compatibility_date": "2025-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "routes": [{ "pattern": "pdf.beykoz.edu.tr", "custom_domain": true }],
+  "assets": {
+    "directory": "dist/cloudflare/assets",
+    "binding": "ASSETS",
+    "html_handling": "none",
+    "not_found_handling": "none",
+    // Protected pages and engine files: only the Worker may read them.
+    "run_worker_first": ["/_private/*"]
+  },
+  "rules": [{ "type": "Text", "globs": ["**/*.html"], "fallthrough": false }],
+  "observability": { "enabled": true },
+  // Public values from Google Admin > Apps > Web and mobile apps > PDF Düzenle.
+  // SAML_IDP_CERT and SESSION_SECRET are secrets: wrangler secret put <NAME>.
+  "vars": {
+    "APP_URL": "https://pdf.beykoz.edu.tr",
+    "SAML_ENTRY_POINT": "https://accounts.google.com/o/saml2/idp?idpid=C03zttp24",
+    "SAML_IDP_ISSUER": "https://accounts.google.com/o/saml2?idpid=C03zttp24",
+    "SAML_SP_ENTITY_ID": "https://pdf.beykoz.edu.tr/metadata.php"
+  }
+}

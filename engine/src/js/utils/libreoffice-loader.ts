@@ -25,6 +25,38 @@ export type ProgressCallback = (progress: LoadProgress) => void;
 // Singleton for converter instance
 let converterInstance: LibreOfficeConverter | null = null;
 
+// The LibreOffice WASM build occasionally deadlocks inside lok_documentLoad
+// and never answers. Allow generous time for large files, then restart the
+// engine and retry instead of leaving the user on a spinner forever.
+const CONVERSION_ATTEMPTS = 3;
+const conversionTimeout = (file: File) =>
+  30_000 + Math.ceil(file.size / 1_000_000) * 30_000;
+
+class ConversionStalledError extends Error {}
+
+// Start-up reports progress only between stages: nothing while the ~77 MB of
+// engine files download (slow links), then steps every second or so.
+async function untilStalled(
+  task: Promise<void>,
+  progress: () => { percent: number; at: number }
+): Promise<void> {
+  let timer: ReturnType<typeof setInterval> | undefined;
+  const stalled = new Promise<never>((_, reject) => {
+    timer = setInterval(() => {
+      const { percent, at } = progress();
+      const quiet = Date.now() - at;
+      if (quiet > (percent > 55 ? 30_000 : 300_000)) {
+        reject(new ConversionStalledError('LibreOffice did not start'));
+      }
+    }, 1000);
+  });
+  try {
+    await Promise.race([task, stalled]);
+  } finally {
+    clearInterval(timer);
+  }
+}
+
 export class LibreOfficeConverter {
   private converter: WorkerBrowserConverter | null = null;
   private initialized = false;
@@ -55,36 +87,58 @@ export class LibreOfficeConverter {
         message: 'Loading conversion engine...',
       });
 
-      this.converter = new WorkerBrowserConverter({
-        sofficeJs: `${this.basePath}soffice.${LIBREOFFICE_SCRIPT_EXTENSION}`,
-        sofficeWasm: `${this.basePath}soffice.wasm.${LIBREOFFICE_BINARY_EXTENSION}`,
-        sofficeData: `${this.basePath}soffice.data.${LIBREOFFICE_BINARY_EXTENSION}`,
-        sofficeWorkerJs: `${this.basePath}soffice.worker.${LIBREOFFICE_SCRIPT_EXTENSION}`,
-        browserWorkerJs: `${this.basePath}browser.worker.global.${LIBREOFFICE_SCRIPT_EXTENSION}`,
-        verbose: false,
-        onProgress: (info: {
-          phase: string;
-          percent: number;
-          message: string;
-        }) => {
-          if (progressCallback && !this.initialized) {
-            const simplifiedMessage = `Loading conversion engine (${Math.round(info.percent)}%)...`;
-            progressCallback({
-              phase: info.phase as LoadProgress['phase'],
-              percent: info.percent,
-              message: simplifiedMessage,
-            });
-          }
-        },
-        onReady: () => {
-          console.log('[LibreOffice] Ready!');
-        },
-        onError: (error: Error) => {
-          console.error('[LibreOffice] Error:', error);
-        },
-      });
+      const start = () => {
+        progress = { percent: 0, at: Date.now() };
+        this.converter = new WorkerBrowserConverter({
+          sofficeJs: `${this.basePath}soffice.${LIBREOFFICE_SCRIPT_EXTENSION}`,
+          sofficeWasm: `${this.basePath}soffice.wasm.${LIBREOFFICE_BINARY_EXTENSION}`,
+          sofficeData: `${this.basePath}soffice.data.${LIBREOFFICE_BINARY_EXTENSION}`,
+          sofficeWorkerJs: `${this.basePath}soffice.worker.${LIBREOFFICE_SCRIPT_EXTENSION}`,
+          browserWorkerJs: `${this.basePath}browser.worker.global.${LIBREOFFICE_SCRIPT_EXTENSION}`,
+          verbose: false,
+          onProgress: (info: {
+            phase: string;
+            percent: number;
+            message: string;
+          }) => {
+            progress = { percent: info.percent, at: Date.now() };
+            if (progressCallback && !this.initialized) {
+              const simplifiedMessage = `Loading conversion engine (${Math.round(info.percent)}%)...`;
+              progressCallback({
+                phase: info.phase as LoadProgress['phase'],
+                percent: info.percent,
+                message: simplifiedMessage,
+              });
+            }
+          },
+          onReady: () => {
+            console.log('[LibreOffice] Ready!');
+          },
+          onError: (error: Error) => {
+            console.error('[LibreOffice] Error:', error);
+          },
+        });
 
-      await this.converter.initialize();
+        return this.converter.initialize();
+      };
+      let progress = { percent: 0, at: Date.now() };
+      for (let attempt = 1; ; attempt++) {
+        try {
+          await untilStalled(start(), () => progress);
+          break;
+        } catch (error) {
+          if (!(error instanceof ConversionStalledError)) throw error;
+          console.warn(
+            `[LibreOffice] Engine start stalled (attempt ${attempt}/${CONVERSION_ATTEMPTS}); restarting`
+          );
+          this.terminate();
+          if (attempt >= CONVERSION_ATTEMPTS) {
+            throw new Error(
+              'Dönüştürme motoru başlatılamadı. Lütfen sayfayı yenileyip yeniden deneyin.'
+            );
+          }
+        }
+      }
       this.initialized = true;
 
       // Call completion message
@@ -106,6 +160,47 @@ export class LibreOfficeConverter {
   }
 
   async convertToPdf(file: File): Promise<Blob> {
+    for (let attempt = 1; ; attempt++) {
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      const stalled = new Promise<never>((_, reject) => {
+        timer = setTimeout(
+          () =>
+            reject(new ConversionStalledError('LibreOffice did not respond')),
+          conversionTimeout(file)
+        );
+      });
+      try {
+        return await Promise.race([this.convertOnce(file), stalled]);
+      } catch (error) {
+        if (!(error instanceof ConversionStalledError)) throw error;
+        console.warn(
+          `[LibreOffice] Conversion stalled (attempt ${attempt}/${CONVERSION_ATTEMPTS}); restarting the engine`
+        );
+        this.terminate();
+        if (attempt >= CONVERSION_ATTEMPTS) {
+          throw new Error(
+            'Dönüştürme motoru yanıt vermedi. Lütfen yeniden deneyin.'
+          );
+        }
+        await this.initialize();
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+  }
+
+  // destroy() waits for the worker to acknowledge, which a deadlocked worker
+  // never does; terminating it also stops its nested soffice threads.
+  private terminate(): void {
+    const converter = this.converter as unknown as {
+      worker?: Worker | null;
+    } | null;
+    converter?.worker?.terminate();
+    this.converter = null;
+    this.initialized = false;
+  }
+
+  private async convertOnce(file: File): Promise<Blob> {
     if (!this.converter) {
       throw new Error('Converter not initialized');
     }

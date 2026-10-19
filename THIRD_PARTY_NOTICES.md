@@ -19,8 +19,9 @@ Yerel motor değişiklikleri:
 - Derleme sonrası marka, Türkçe başlangıç, noindex ve Beykoz tema dosyalarının eklenmesi. Bu işlem `scripts/build.mjs` ile tekrarlanabilir.
 - Motor HTML'lerinin ve WASM dahil tüm statik dosyalarının Express oturum denetimi arkasında sunulması.
 
-Yeni portal ve Node.js kodu deponun mevcut GPL-3.0 lisansı altında sunulur. Motor ve ondan türeyen değişikliklerin AGPL koşulları korunur. Kaynak arşivi giriş yapan tüm kullanıcılara `/pdf/source` üzerinden sağlanır; kimlik doğrulama bilgileri ve sertifika dosyaları arşivden çıkarılır.
+Yeni portal ve Node.js kodu deponun mevcut GPL-3.0 lisansı altında sunulur. Motor ve ondan türeyen değişikliklerin AGPL koşulları korunur. Kaynak arşivi giriş yapan tüm kullanıcılara `/source.php` üzerinden sağlanır; kimlik doğrulama bilgileri ve sertifika dosyaları arşivden çıkarılır.
 
 Motorun npm bağımlılıkları kendi paketlerindeki lisanslarını korur. Özellikle WASM tabanlı dönüştürme modülleri ayrı lisanslara sahip olabilir; kurum içi yeniden dağıtım veya modül güncellemesinde ilgili paket lisanslarını inceleyin.
 
 - `engine/src/js/logic/merge-pdf-page.ts` ve ilgili HTML'de, dosyalar/sayfa listesi yüklenirken erken birleştirmeyi engelleyen düğme durumu düzeltildi; sık kullanılan birleştirme metinleri Türkçeleştirildi.
+- `engine/src/js/utils/libreoffice-loader.ts` içinde, LibreOffice WASM belgenin açılışında ara sıra kilitlendiğinde dönüşüm sonsuza kadar beklemek yerine motor yeniden başlatılıp en fazla üç kez denenir.

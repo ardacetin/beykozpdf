@@ -18,15 +18,15 @@ test('PHP config accepts dotenv-style comments', () => {
   try {
     writeFileSync(path.join(privateDir, '.env'), [
       '# comment containing a home-relative ~/path',
-      'APP_URL=https://my.beykoz.edu.tr/pdf',
+      'APP_URL=https://pdf.beykoz.edu.tr',
       'SAML_ENTRY_POINT=',
       'SAML_IDP_ISSUER=',
       'SAML_IDP_CERT_PATH=./certs/google-workspace.pem',
-      'SAML_SP_ENTITY_ID=https://my.beykoz.edu.tr/pdf/metadata.php',
+      'SAML_SP_ENTITY_ID=https://pdf.beykoz.edu.tr/metadata.php',
     ].join('\n'));
     const code = `require ${JSON.stringify(path.join(root, 'php/config.php'))}; ` +
       `$config = pdf_config(${JSON.stringify(privateDir)}); echo $config['url'];`;
-    assert.equal(execFileSync('php', ['-r', code], { encoding: 'utf8' }), 'https://my.beykoz.edu.tr/pdf');
+    assert.equal(execFileSync('php', ['-r', code], { encoding: 'utf8' }), 'https://pdf.beykoz.edu.tr');
   } finally {
     rmSync(privateDir, { recursive: true, force: true });
   }
@@ -34,8 +34,8 @@ test('PHP config accepts dotenv-style comments', () => {
 
 test('SAML requires the Google Workspace signed-response profile', () => {
   const code = `require ${JSON.stringify(path.join(root, 'php/config.php'))}; ` +
-    `$settings = pdf_saml_settings(['url' => 'https://my.beykoz.edu.tr/pdf', ` +
-    `'entity' => 'https://my.beykoz.edu.tr/pdf/metadata.php', 'issuer' => 'https://accounts.google.com/o/saml2?idpid=test', ` +
+    `$settings = pdf_saml_settings(['url' => 'https://pdf.beykoz.edu.tr', ` +
+    `'entity' => 'https://pdf.beykoz.edu.tr/metadata.php', 'issuer' => 'https://accounts.google.com/o/saml2?idpid=test', ` +
     `'entry' => 'https://accounts.google.com/o/saml2/idp?idpid=test', 'cert' => 'test']); ` +
     `echo json_encode($settings['security']);`;
   const security = JSON.parse(execFileSync('php', ['-r', code], { encoding: 'utf8' }));
@@ -45,34 +45,34 @@ test('SAML requires the Google Workspace signed-response profile', () => {
 
 test('release contains PHP entry points and no runtime service configuration', () => {
   const release = path.join(root, 'dist/php-release');
-  for (const file of ['htdocs/my.beykoz.edu.tr/pdf/index.php',
-    'htdocs/my.beykoz.edu.tr/pdf/app.php',
-    'htdocs/my.beykoz.edu.tr/pdf/login.php',
-    'htdocs/my.beykoz.edu.tr/pdf/saml-acs.php',
-    'htdocs/my.beykoz.edu.tr/pdf/metadata.php',
-    'htdocs/my.beykoz.edu.tr/pdf/engine/merge-pdf.php',
-    'htdocs/my.beykoz.edu.tr/pdf/engine/pdf-to-docx.php',
-    'htdocs/my.beykoz.edu.tr/pdf/engine/pdf-to-excel.php',
-    'htdocs/my.beykoz.edu.tr/pdf/engine/pdf-to-text.php',
-    'htdocs/my.beykoz.edu.tr/pdf/engine/extract-images.php',
-    'htdocs/my.beykoz.edu.tr/pdf/engine/repair-pdf.php',
-    'htdocs/my.beykoz.edu.tr/pdf/engine/remove-blank-pages.php',
-    'htdocs/my.beykoz.edu.tr/pdf/engine/deskew-pdf.php',
-    'htdocs/my.beykoz.edu.tr/pdf/engine/compare-pdfs.php',
-    'htdocs/my.beykoz.edu.tr/pdf/engine/form-filler.php',
-    'htdocs/my.beykoz.edu.tr/pdf/engine/header-footer.php',
-    'htdocs/my.beykoz.edu.tr/pdf/engine/table-of-contents.php',
-    'htdocs/my.beykoz.edu.tr/pdf/engine/workers/merge.worker.php',
+  for (const file of ['htdocs/pdf.beykoz.edu.tr/index.php',
+    'htdocs/pdf.beykoz.edu.tr/app.php',
+    'htdocs/pdf.beykoz.edu.tr/login.php',
+    'htdocs/pdf.beykoz.edu.tr/saml-acs.php',
+    'htdocs/pdf.beykoz.edu.tr/metadata.php',
+    'htdocs/pdf.beykoz.edu.tr/engine/merge-pdf.php',
+    'htdocs/pdf.beykoz.edu.tr/engine/pdf-to-docx.php',
+    'htdocs/pdf.beykoz.edu.tr/engine/pdf-to-excel.php',
+    'htdocs/pdf.beykoz.edu.tr/engine/pdf-to-text.php',
+    'htdocs/pdf.beykoz.edu.tr/engine/extract-images.php',
+    'htdocs/pdf.beykoz.edu.tr/engine/repair-pdf.php',
+    'htdocs/pdf.beykoz.edu.tr/engine/remove-blank-pages.php',
+    'htdocs/pdf.beykoz.edu.tr/engine/deskew-pdf.php',
+    'htdocs/pdf.beykoz.edu.tr/engine/compare-pdfs.php',
+    'htdocs/pdf.beykoz.edu.tr/engine/form-filler.php',
+    'htdocs/pdf.beykoz.edu.tr/engine/header-footer.php',
+    'htdocs/pdf.beykoz.edu.tr/engine/table-of-contents.php',
+    'htdocs/pdf.beykoz.edu.tr/engine/workers/merge.worker.php',
     'pdf-duzenle-private/vendor/autoload.php', 'pdf-duzenle-private/.env.example']) {
     assert.ok(statSync(path.join(release, file)).isFile(), file);
   }
   assert.equal(readdirSync(release).includes('ecosystem.config.cjs'), false);
   assert.equal(readdirSync(path.join(release, 'pdf-duzenle-private')).includes('source.tar.gz'), false);
-  assert.match(readFileSync(path.join(release, 'htdocs/my.beykoz.edu.tr/pdf/app.php'), 'utf8'), /PDF_ROUTE.*app/);
+  assert.match(readFileSync(path.join(release, 'htdocs/pdf.beykoz.edu.tr/app.php'), 'utf8'), /PDF_ROUTE.*app/);
 });
 
 test('release publishes browser modules with CloudPanel-compatible JS paths', () => {
-  const engineDir = path.join(root, 'dist/php-release/htdocs/my.beykoz.edu.tr/pdf/engine');
+  const engineDir = path.join(root, 'dist/php-release/htdocs/pdf.beykoz.edu.tr/engine');
   const files = readdirSync(engineDir, { recursive: true, withFileTypes: true })
     .filter(entry => entry.isFile())
     .map(entry => path.relative(engineDir, path.join(entry.parentPath, entry.name)));
@@ -90,12 +90,12 @@ test('release publishes browser modules with CloudPanel-compatible JS paths', ()
   assert.ok(splitEntryName);
   const splitEntry = readFileSync(path.join(engineDir, 'assets', splitEntryName), 'utf8');
   assert.match(splitEntry, /\.\/main-[^"'`?]+\.js\?v=[a-z0-9]+/);
-  assert.match(splitEntry, /\/pdf\/engine\/assets\/pdf\.worker[^"'`?]+\.js\?v=[a-z0-9]+/);
-  assert.doesNotMatch(splitEntry, /["'`](?:\.\/|\/pdf\/)[^"'`?]+\.js["'`]/);
+  assert.match(splitEntry, /\/engine\/assets\/pdf\.worker[^"'`?]+\.js\?v=[a-z0-9]+/);
+  assert.doesNotMatch(splitEntry, /["'`](?:\.\/|\/(?!\/))[^"'`?]+\.js["'`]/);
 });
 
 test('release serves LibreOffice runtime through authenticated PHP routes', () => {
-  const publicRoot = path.join(root, 'dist/php-release/htdocs/my.beykoz.edu.tr/pdf');
+  const publicRoot = path.join(root, 'dist/php-release/htdocs/pdf.beykoz.edu.tr');
   const privateRoot = path.join(root, 'dist/php-release/pdf-duzenle-private');
   for (const name of ['browser.worker.global', 'soffice', 'soffice.worker']) {
     const publicScript = path.join(publicRoot, 'engine', 'libreoffice-wasm', `${name}.php`);

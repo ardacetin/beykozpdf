@@ -5,7 +5,9 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const release = path.join(root, 'dist/php-release');
-const publicDir = path.join(release, 'htdocs/my.beykoz.edu.tr/pdf');
+const appUrl = new URL(process.env.APP_URL || 'https://pdf.beykoz.edu.tr');
+const base = appUrl.pathname.replace(/\/$/, '');
+const publicDir = path.join(release, 'htdocs', appUrl.hostname, base);
 const privateDir = path.join(release, 'pdf-duzenle-private');
 if (!existsSync(path.join(root, 'vendor/autoload.php'))) throw new Error('Önce composer install --no-dev çalıştırın.');
 rmSync(release, { recursive: true, force: true });
@@ -17,6 +19,7 @@ cpSync(path.join(root, 'web'), path.join(privateDir, 'web'), { recursive: true }
 cpSync(path.join(root, '.env.example'), path.join(privateDir, '.env.example'));
 mkdirSync(path.join(privateDir, 'certs'));
 cpSync(path.join(root, 'php/public/index.php'), path.join(publicDir, 'index.php'));
+cpSync(path.join(root, 'php/public/maintenance.html'), path.join(publicDir, 'maintenance.html'));
 for (const [file, route] of Object.entries({
   'app': 'app', 'login': 'login', 'saml-acs': 'acs', 'metadata': 'metadata',
   'logout': 'logout', 'me': 'me', 'healthz': 'health', 'auth-status': 'status', 'source': 'source',
@@ -46,7 +49,7 @@ function versionJavaScriptLinks(text) {
   // .mjs worker paths to .js. Version every local module/worker URL so the
   // whole import graph is refreshed together.
   return text.replace(
-    /(["'`])((?:\.{1,2}\/|\/pdf\/)[^"'`\s?]+\.js)\1/g,
+    new RegExp(`(["'\`])((?:\\.{1,2}/|${base}/(?!/))[^"'\`\\s?]+\\.js)\\1`, 'g'),
     (_match, quote, url) => `${quote}${url}?v=${engineAssetVersion}${quote}`,
   );
 }

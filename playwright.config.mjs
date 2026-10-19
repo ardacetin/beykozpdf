@@ -10,8 +10,8 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
   webServer: {
-    command: "NODE_ENV=test node tests/php-server.mjs",
-    url: "http://127.0.0.1:3100/pdf/healthz.php",
+    command: "NODE_ENV=test node tests/test-server.mjs",
+    url: "http://127.0.0.1:3100/healthz.php",
     reuseExistingServer: false,
     timeout: 30_000,
   },

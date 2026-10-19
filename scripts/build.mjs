@@ -10,7 +10,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("../", import.meta.url));
 const base = new URL(
-  process.env.APP_URL || "https://my.beykoz.edu.tr/pdf",
+  process.env.APP_URL || "https://pdf.beykoz.edu.tr",
 ).pathname.replace(/\/$/, "");
 execFileSync("npm", ["run", "build:docker", "--prefix", "engine"], {
   cwd: root,
@@ -82,3 +82,4 @@ writeFileSync(
 );
 console.info(`PDF Düzenle hazır: ${base}`);
 await import('./package-php.mjs');
+await import('./package-cloudflare.mjs');
