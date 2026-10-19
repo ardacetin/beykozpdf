@@ -121,10 +121,14 @@ const text = (status, message, headers = {}) =>
   new Response(message, { status, headers: { "Content-Type": "text/plain; charset=utf-8", ...headers } });
 const json = (data, status = 200) => Response.json(data, { status });
 
-function maintenance(route) {
+function maintenance(route, error) {
   const headers = { "Retry-After": "300", "Cache-Control": "no-store" };
   if (["me", "status", "health"].includes(route)) {
-    return new Response('{"error":"maintenance"}', { status: 503, headers: { ...headers, "Content-Type": "application/json; charset=utf-8" } });
+    const body = { error: "maintenance" };
+    // Config messages name the missing setting, never its value; the health
+    // check shows it so a misconfiguration can be diagnosed without log access.
+    if (route === "health" && error instanceof ConfigError) body.reason = error.message;
+    return new Response(JSON.stringify(body), { status: 503, headers: { ...headers, "Content-Type": "application/json; charset=utf-8" } });
   }
   return new Response(maintenancePage.replaceAll("{{YEAR}}", String(new Date().getFullYear())), {
     status: 503, headers: { ...headers, "Content-Type": "text/html; charset=utf-8" },
@@ -288,7 +292,7 @@ export default {
       return secure(await handle(request, env, config, route, path));
     } catch (error) {
       console.error(`PDF Düzenle: ${error?.name}: ${String(error?.message).slice(0, 500)}`);
-      return maintenance(route);
+      return maintenance(route, error);
     }
   },
 };
