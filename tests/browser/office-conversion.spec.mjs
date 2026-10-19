@@ -7,6 +7,14 @@ const DOCX = Buffer.from(
   'base64',
 );
 
+// Once a tool is shown, the workspace hides #engine-loading on the iframe's
+// load event, after the tool page has attached its file-input listeners.
+async function engineFrame(page) {
+  await expect(page.locator('#tool-view')).toBeVisible();
+  await expect(page.locator('#engine-loading')).toBeHidden({ timeout: 30_000 });
+  return page.frameLocator('#engine-frame');
+}
+
 async function signIn(page) {
   await page.goto('/');
   await page.getByRole('link', { name: 'Google Workspace ile giriş yap' }).click();
@@ -17,7 +25,7 @@ test('Word belgesini tarayıcıda PDF dosyasına dönüştürür', async ({ page
   test.setTimeout(180_000);
   await signIn(page);
   await page.goto('/app.php?tool=word-to-pdf');
-  const frame = page.frameLocator('#engine-frame');
+  const frame = await engineFrame(page);
   await frame.locator('#file-input').setInputFiles({
     name: 'beykoz-test.docx',
     mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -45,7 +53,7 @@ test('PDF belgesini tarayıcıda Word dosyasına dönüştürür', async ({ page
 
   await signIn(page);
   await page.goto('/app.php?tool=pdf-to-docx');
-  const frame = page.frameLocator('#engine-frame');
+  const frame = await engineFrame(page);
   await frame.locator('#file-input').setInputFiles({
     name: 'beykoz-pdf-test.pdf',
     mimeType: 'application/pdf',
