@@ -64,3 +64,27 @@ test('DTDs and malformed input are rejected', () => {
   rejects('not base64 at all!');
   rejects(undefined);
 });
+
+test('Google responses that also sign the Assertion are accepted', () => {
+  // Signing order matters: the Assertion first, then the enclosing Response.
+  assert.equal(
+    verifyResponse(response({ signTags: ['Assertion', 'Response'] }), config, id),
+    'arda@beykoz.edu.tr',
+  );
+});
+
+test('UNSPECIFIED NameID format is accepted, other formats are not', () => {
+  const unspecified = 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified';
+  const withFormat = (format) => response({
+    transform: (xml) => xml.replace('urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress', format),
+  });
+  assert.equal(verifyResponse(withFormat(unspecified), config, id), 'arda@beykoz.edu.tr');
+  rejects(withFormat('urn:oasis:names:tc:SAML:2.0:nameid-format:transient'));
+});
+
+test('a claims mismatch names the failing claim, not its value', () => {
+  assert.throws(
+    () => verifyResponse(response({ audience: 'https://evil.test/metadata.php' }), config, id),
+    { message: 'Claims mismatch: Audience' },
+  );
+});

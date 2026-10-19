@@ -237,7 +237,10 @@ async function handle(request, env, config, route, path) {
     } catch (error) {
       if (!(error instanceof SamlError)) throw error;
       console.warn(`PDF Düzenle: SAML authentication rejected; ${error.message}`);
-      return redirect(`${base}/?error=authentication`, [clearFlow]);
+      // The reason names a failed check (e.g. "Claims mismatch: Audience"),
+      // never response content, so users can pass it on to IT support.
+      const code = encodeURIComponent(error.message.slice(0, 120));
+      return redirect(`${base}/?error=authentication&code=${code}`, [clearFlow]);
     }
     if (!/^[^@\s]+@beykoz\.edu\.tr$/.test(email)) return redirect(`${base}/?error=domain`, [clearFlow]);
     const user = {
