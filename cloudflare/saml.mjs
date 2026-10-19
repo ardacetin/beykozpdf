@@ -8,6 +8,7 @@ const PROTOCOL = "urn:oasis:names:tc:SAML:2.0:protocol";
 const ASSERTION = "urn:oasis:names:tc:SAML:2.0:assertion";
 const DSIG = "http://www.w3.org/2000/09/xmldsig#";
 const EMAIL_FORMAT = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress";
+const UNSPECIFIED_FORMAT = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
 const EXC_C14N = "http://www.w3.org/2001/10/xml-exc-c14n#";
 const STRONG_ALGORITHMS = new Set([
   "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
@@ -117,16 +118,25 @@ export function verifyResponse(encoded, config, requestId, now = Date.now() / 10
   const root = doc.documentElement;
   if (root.namespaceURI !== PROTOCOL || root.localName !== "Response") fail("Not a SAML Response");
 
-  // "Signed response": exactly one signature, directly on the Response,
-  // covering the Response by its ID.
-  const signatures = doc.getElementsByTagNameNS(DSIG, "Signature");
-  if (signatures.length !== 1 || signatures[0].parentNode !== root) fail("Response signature required");
-  const signature = signatures[0];
-  for (const tag of ["SignatureMethod", "DigestMethod"]) {
-    const nodes = signature.getElementsByTagNameNS(DSIG, tag);
-    if (!nodes.length) fail("Missing signature algorithm");
-    for (const node of Array.from(nodes))
-      if (!STRONG_ALGORITHMS.has(node.getAttribute("Algorithm"))) fail("Weak signature algorithm");
+  // "Signed response": exactly one signature directly on the Response,
+  // covering the Response by its ID. Google may also sign the Assertion; that
+  // inner signature is part of the signed Response bytes and is not relied on.
+  const signatures = Array.from(doc.getElementsByTagNameNS(DSIG, "Signature"));
+  const onResponse = signatures.filter((node) => node.parentNode === root);
+  if (onResponse.length !== 1) fail("Response signature required");
+  for (const node of signatures) {
+    const parent = node.parentNode;
+    if (parent !== root && !(parent.parentNode === root && parent.namespaceURI === ASSERTION && parent.localName === "Assertion"))
+      fail("Unexpected signature location");
+  }
+  const signature = onResponse[0];
+  for (const node of signatures) {
+    for (const tag of ["SignatureMethod", "DigestMethod"]) {
+      const nodes = node.getElementsByTagNameNS(DSIG, tag);
+      if (!nodes.length) fail("Missing signature algorithm");
+      for (const method of Array.from(nodes))
+        if (!STRONG_ALGORITHMS.has(method.getAttribute("Algorithm"))) fail("Weak signature algorithm");
+    }
   }
   for (const node of Array.from(signature.getElementsByTagNameNS(DSIG, "Transform")))
     if (!ALLOWED_TRANSFORMS.has(node.getAttribute("Algorithm"))) fail("Unexpected transform");
@@ -161,18 +171,19 @@ export function verifyResponse(encoded, config, requestId, now = Date.now() / 10
   const conditions = one(assertion, ASSERTION, "Conditions");
   const audience = one(one(conditions, ASSERTION, "AudienceRestriction"), ASSERTION, "Audience");
   const nameId = one(subject, ASSERTION, "NameID");
-  if (
-    response.getAttribute("Version") !== "2.0" ||
-    response.getAttribute("Destination") !== config.acs ||
-    response.getAttribute("InResponseTo") !== requestId ||
-    confirmation.getAttribute("Method") !== "urn:oasis:names:tc:SAML:2.0:cm:bearer" ||
-    data.getAttribute("Recipient") !== config.acs ||
-    data.getAttribute("InResponseTo") !== requestId ||
-    audience.textContent.trim() !== config.entity ||
-    one(response, ASSERTION, "Issuer").textContent.trim() !== config.issuer ||
-    one(assertion, ASSERTION, "Issuer").textContent.trim() !== config.issuer
-  )
-    fail("Claims mismatch");
+  const mismatched = Object.entries({
+    Version: response.getAttribute("Version") === "2.0",
+    Destination: response.getAttribute("Destination") === config.acs,
+    InResponseTo: response.getAttribute("InResponseTo") === requestId,
+    Method: confirmation.getAttribute("Method") === "urn:oasis:names:tc:SAML:2.0:cm:bearer",
+    Recipient: data.getAttribute("Recipient") === config.acs,
+    SubjectInResponseTo: data.getAttribute("InResponseTo") === requestId,
+    Audience: audience.textContent.trim() === config.entity,
+    Issuer: one(response, ASSERTION, "Issuer").textContent.trim() === config.issuer,
+    AssertionIssuer: one(assertion, ASSERTION, "Issuer").textContent.trim() === config.issuer,
+  }).filter(([, ok]) => !ok).map(([name]) => name);
+  // Names the failing claims (never their values) for the log and error code.
+  if (mismatched.length) fail(`Claims mismatch: ${mismatched.join(",")}`);
   for (const element of [response, assertion]) {
     const issued = time(element, "IssueInstant");
     if (issued < now - 300 || issued > now + 30) fail("Assertion age");
@@ -181,7 +192,10 @@ export function verifyResponse(encoded, config, requestId, now = Date.now() / 10
     if (time(element, "NotOnOrAfter") <= now - 30) fail("Expired assertion");
     if (element.hasAttribute("NotBefore") && time(element, "NotBefore") > now + 30) fail("Future assertion");
   }
-  if (nameId.hasAttribute("Format") && nameId.getAttribute("Format") !== EMAIL_FORMAT) fail("Unexpected NameID format");
+  // Google sends EMAIL or UNSPECIFIED depending on the app's Name ID format;
+  // either way the value is checked as a @beykoz.edu.tr address by the caller.
+  if (nameId.hasAttribute("Format") && ![EMAIL_FORMAT, UNSPECIFIED_FORMAT].includes(nameId.getAttribute("Format")))
+    fail("Unexpected NameID format");
   return nameId.textContent.trim().toLowerCase();
 }
 

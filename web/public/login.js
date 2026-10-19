@@ -12,7 +12,8 @@ const errors = {
 const error = new URLSearchParams(location.search).get("error");
 const message = document.querySelector("#login-message");
 if (errors[error]) {
-  message.textContent = errors[error];
+  const code = new URLSearchParams(location.search).get("code");
+  message.textContent = errors[error] + (code ? ` (Hata kodu: ${code})` : "");
   message.hidden = false;
 }
 const dialog = document.querySelector("#info-dialog");
