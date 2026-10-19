@@ -246,8 +246,16 @@ test("tool controls, help copy and messages are localized in Turkish", async ({
 
   await page.goto("/pdf/app.php?tool=compress-pdf");
   const compressFrame = page.frameLocator("#engine-frame");
-  await compressFrame.locator("#process-btn").dispatchEvent("click");
-  await expect(compressFrame.locator("#alert-title")).toHaveText("Dosya Yok");
+  // The engine applies its locale files asynchronously; a click that lands
+  // before they arrive has its alert title reset to the generic "Uyarı".
+  // Retry the click until the tool's own message is what stays on screen.
+  await expect(async () => {
+    await compressFrame.locator("#process-btn").dispatchEvent("click");
+    await expect(compressFrame.locator("#alert-title")).toHaveText(
+      "Dosya Yok",
+      { timeout: 1000 },
+    );
+  }).toPass({ timeout: 15_000 });
   await expect(compressFrame.locator("#alert-message")).toHaveText(
     "Lütfen en az bir PDF dosyası seçin.",
   );

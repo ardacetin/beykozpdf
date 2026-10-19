@@ -30,7 +30,7 @@ SAML_IDP_CERT_PATH=./certs/google-workspace.pem
 SAML_SP_ENTITY_ID=https://my.beykoz.edu.tr/pdf/metadata.php
 ```
 
-Her anahtarı `.env` içinde **yalnızca bir kez** yazın. Aynı anahtar iki kez geçerse sonraki satır geçerli olur; örneğin ikinci bir `SAML_IDP_CERT_PATH` satırı, var olan sertifika dosyasının yerine olmayan bir dosyayı gösterebilir ve tüm sayfalar `PDF Düzenle açılamadı` (HTTP 500) hatası verir. PHP hata günlüğü bu durumda eksik dosyanın yolunu yazar.
+Her anahtarı `.env` içinde **yalnızca bir kez** yazın. Aynı anahtar iki kez geçerse sonraki satır geçerli olur; örneğin ikinci bir `SAML_IDP_CERT_PATH` satırı, var olan sertifika dosyasının yerine olmayan bir dosyayı gösterebilir ve tüm sayfalar “Yapım aşamasındayız” bakım sayfasını (HTTP 503) gösterir. Ziyaretçiler teknik ayrıntı görmez; asıl neden PHP hata günlüğüne `PDF Düzenle:` önekiyle yazılır (örneğin eksik sertifika dosyasının yolu).
 
 SSO URL ve issuer örneklerini tahmin ederek kullanmayın; Google ekranındaki değerleri aynen kopyalayın. İndirilen PEM sertifikasını belirtilen dosyaya yerleştirin. Bu, Google'ın **herkese açık sertifikasıdır**; Google özel anahtarı alınmaz.
 

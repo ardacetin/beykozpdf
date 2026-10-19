@@ -1,15 +1,98 @@
 <?php
 declare(strict_types=1);
 
+// Shown when the private install is missing or the app fails to start. Public
+// visitors see a branded maintenance notice; the cause goes to the error log.
+// Self-contained (inline CSS/SVG) because the failure may be the files it
+// would otherwise load.
+function pdf_maintenance(): never
+{
+    if (!headers_sent()) {
+        http_response_code(503);
+        header('Retry-After: 300');
+        header('Cache-Control: no-store');
+        if (in_array(defined('PDF_ROUTE') ? PDF_ROUTE : 'home', ['me', 'status', 'health'], true)) {
+            header('Content-Type: application/json; charset=utf-8');
+            exit('{"error":"maintenance"}');
+        }
+        header('Content-Type: text/html; charset=utf-8');
+    }
+    $year = date('Y');
+    echo <<<HTML
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#7A232C">
+<title>Bakım çalışması · PDF Düzenle</title>
+<style>
+:root{--brand:#7a232c;--brand-dark:#601923;--brand-soft:#f4e9e9;--ink:#29272a;--muted:#797579;--line:#eae7e5;--bg:#f8f7f5;
+--shadow:0 20px 60px -26px #40202732,0 3px 8px #35222604;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:var(--ink);background:var(--bg)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:12px;white-space:nowrap;color:inherit;text-decoration:none}
+.brand>span{font-size:21px;font-weight:650;letter-spacing:-.7px}
+.brand small{display:block;font-size:8px;font-weight:650;letter-spacing:2.2px;margin-top:6px;color:#8b8586}
+header{width:100%;max-width:1336px;margin:0 auto;padding:35px 50px;display:flex;justify-content:space-between;align-items:center}
+.note{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--muted)}
+.dot{width:6px;height:6px;border-radius:50%;background:#c58a3a;box-shadow:0 0 0 4px #c58a3a18;animation:pulse 2s ease-in-out infinite}
+main{flex:1;display:grid;place-items:center;padding:20px 24px 50px}
+.card{width:100%;max-width:480px;background:#ffffffd9;border:1px solid #fff;border-radius:25px;padding:38px 36px 32px;box-shadow:var(--shadow);text-align:center}
+.icon{position:relative;width:64px;height:64px;margin:0 auto 30px}
+.icon svg{width:64px;height:64px;border-radius:18px;box-shadow:0 7px 15px #7a232c18}
+.gear{position:absolute;right:-12px;bottom:-10px;width:30px;height:30px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 4px 10px #40202722}
+.gear svg{width:18px;height:18px;box-shadow:none;border-radius:0;animation:spin 6s linear infinite}
+.eyebrow{display:block;font-size:10px;font-weight:650;letter-spacing:2px;color:var(--brand)}
+h1{font-size:35px;font-weight:550;letter-spacing:-1.3px;margin:14px 0 12px}
+p{font-size:14px;line-height:1.85;color:var(--muted);margin:0 0 28px}
+.bar{height:4px;border-radius:4px;background:var(--brand-soft);overflow:hidden;margin:0 0 28px}
+.bar i{display:block;height:100%;width:38%;border-radius:4px;background:var(--brand);animation:slide 1.8s ease-in-out infinite}
+.button{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--brand);color:#fff;min-height:54px;border-radius:11px;font-size:13px;font-weight:550;text-decoration:none;box-shadow:0 6px 14px #7a232c19;transition:background .2s,transform .2s,box-shadow .2s}
+.button:hover{background:var(--brand-dark);transform:translateY(-1px);box-shadow:0 9px 20px #7a232c25}
+.button:focus-visible{outline:3px solid #ad6570;outline-offset:5px}
+.small{font-size:11px;color:#9c9496;margin:18px 0 0}
+footer{width:100%;max-width:1236px;margin:0 auto;padding:24px 0 30px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:10px;color:#989091}
+footer span+span{color:#b0a7a6}
+@keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(265%)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{50%{opacity:.45}}
+@media (max-width:760px){header{padding:22px 16px}.note{display:none}.card{padding:30px 22px 26px;border-radius:20px}h1{font-size:28px}p br{display:none}footer{flex-direction:column;gap:6px;padding:20px 16px 24px;text-align:center}}
+@media (prefers-reduced-motion:reduce){.dot,.gear svg,.bar i{animation:none}}
+</style>
+</head>
+<body>
+<header>
+<span class="brand"><svg width="44" height="44" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="14" fill="#7A232C"/><g fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 11h11l7 7v19H16z"/><path d="M27 11v8h7M21 25h8M21 30h6"/><path d="M11 16v21a5 5 0 0 0 5 5h13" opacity=".45"/></g></svg><span>PDF Düzenle<small>BEYKOZ ÜNİVERSİTESİ</small></span></span>
+<span class="note"><span class="dot"></span> Bakım çalışması sürüyor</span>
+</header>
+<main>
+<section class="card" aria-labelledby="title">
+<div class="icon" aria-hidden="true"><svg viewBox="0 0 48 48"><rect width="48" height="48" rx="14" fill="#7A232C"/><g fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 11h11l7 7v19H16z"/><path d="M27 11v8h7M21 25h8M21 30h6"/></g></svg><span class="gear"><svg viewBox="0 0 24 24" fill="none" stroke="#7A232C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg></span></div>
+<span class="eyebrow">KISA BİR ARA</span>
+<h1 id="title">Yapım aşamasındayız.</h1>
+<p>PDF Düzenle üzerinde bakım çalışması yapıyoruz.<br>Kısa süre içinde yeniden hizmetinizde olacak.</p>
+<div class="bar" aria-hidden="true"><i></i></div>
+<a class="button" href="">Yeniden dene <span aria-hidden="true">↻</span></a>
+<p class="small">Dosyalarınız cihazınızda; bu çalışmadan etkilenmez.</p>
+</section>
+</main>
+<footer><span>© {$year} Beykoz Üniversitesi Bilgi İşlem Direktörlüğü</span><span>Biraz daha kolay. Biraz daha düzenli.</span></footer>
+</body>
+</html>
+HTML;
+    exit;
+}
+
 // CloudPanel: /home/USER/htdocs/DOMAIN/pdf -> /home/USER/pdf-duzenle-private
 $private = getenv('PDF_PRIVATE_DIR') ?: dirname(__DIR__, 3) . '/pdf-duzenle-private';
 ini_set('display_errors', '0');
 header_remove('X-Powered-By');
 header('Cache-Control: private, no-store, max-age=0');
 if (!is_file($private . '/php/app.php')) {
-    http_response_code(503);
-    header('Content-Type: text/plain; charset=utf-8');
-    exit('PDF Düzenle kurulumu eksik. pdf-duzenle-private klasörünü site kullanıcısının ana dizinine yükleyin.');
+    error_log('PDF Düzenle: kurulum eksik; pdf-duzenle-private klasörü bulunamadı: ' . $private);
+    pdf_maintenance();
 }
 try {
     require $private . '/php/app.php';
@@ -18,7 +101,5 @@ try {
     // Exception messages name failed checks/paths only; never assertions or session tokens.
     $reason = str_replace(["\r", "\n", "\0"], ' ', $error->getMessage());
     error_log('PDF Düzenle: ' . get_class($error) . ': ' . substr($reason, 0, 500));
-    http_response_code(500);
-    header('Content-Type: text/plain; charset=utf-8');
-    echo 'PDF Düzenle açılamadı. PHP gereksinimlerini, özel dizin izinlerini ve .env ayarlarını kontrol edin.';
+    pdf_maintenance();
 }
