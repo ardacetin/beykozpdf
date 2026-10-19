@@ -24,3 +24,4 @@ Yeni portal ve Node.js kodu deponun mevcut GPL-3.0 lisansı altında sunulur. Mo
 Motorun npm bağımlılıkları kendi paketlerindeki lisanslarını korur. Özellikle WASM tabanlı dönüştürme modülleri ayrı lisanslara sahip olabilir; kurum içi yeniden dağıtım veya modül güncellemesinde ilgili paket lisanslarını inceleyin.
 
 - `engine/src/js/logic/merge-pdf-page.ts` ve ilgili HTML'de, dosyalar/sayfa listesi yüklenirken erken birleştirmeyi engelleyen düğme durumu düzeltildi; sık kullanılan birleştirme metinleri Türkçeleştirildi.
+- `engine/src/js/utils/libreoffice-loader.ts` içinde, LibreOffice WASM belgenin açılışında ara sıra kilitlendiğinde dönüşüm sonsuza kadar beklemek yerine motor yeniden başlatılıp en fazla üç kez denenir.
