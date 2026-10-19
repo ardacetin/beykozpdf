@@ -15,8 +15,9 @@ try {
     require $private . '/php/app.php';
     pdf_run($private, defined('PDF_ROUTE') ? PDF_ROUTE : 'home');
 } catch (Throwable $error) {
-    // No assertions, configuration values or session tokens in responses/logs.
-    error_log('PDF Düzenle: ' . get_class($error) . '; kurulum ve PHP hata günlüğünü kontrol edin.');
+    // Exception messages name failed checks/paths only; never assertions or session tokens.
+    $reason = str_replace(["\r", "\n", "\0"], ' ', $error->getMessage());
+    error_log('PDF Düzenle: ' . get_class($error) . ': ' . substr($reason, 0, 500));
     http_response_code(500);
     header('Content-Type: text/plain; charset=utf-8');
     echo 'PDF Düzenle açılamadı. PHP gereksinimlerini, özel dizin izinlerini ve .env ayarlarını kontrol edin.';

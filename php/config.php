@@ -30,8 +30,13 @@ function pdf_config(string $private): array
     $certValue = is_file($certPath) ? file_get_contents($certPath) : '';
     $cert = is_string($certValue) ? $certValue : '';
     $configured = $entry !== '' && $issuer !== '' && $cert !== '';
+    if (($entry !== '' || $issuer !== '') && $cert === '') {
+        // Name the missing file (a public certificate path, not a secret) so the
+        // PHP error log points straight at the cause.
+        throw new RuntimeException('Incomplete SAML configuration: SAML_IDP_CERT_PATH ' . $certPath . ' is missing or empty');
+    }
     if (($entry !== '' || $issuer !== '') && !$configured) {
-        throw new RuntimeException('Incomplete SAML configuration');
+        throw new RuntimeException('Incomplete SAML configuration: SAML_ENTRY_POINT and SAML_IDP_ISSUER are both required');
     }
     if ($entry !== '' && parse_url($entry, PHP_URL_SCHEME) !== 'https' &&
         !($testing && parse_url($entry, PHP_URL_HOST) === '127.0.0.1')) {

@@ -126,6 +126,12 @@ function pdf_run(string $private, string $route): void
     header('X-Robots-Tag: noindex, nofollow, noarchive');
     header("Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-eval' blob: https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'self' blob: https://cdn.jsdelivr.net https://tessdata.projectnaptha.com https://fonts.gstatic.com; frame-src 'self' blob:; frame-ancestors 'self'; object-src 'none'; form-action 'self'");
     $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    if ($route === 'acs' && in_array($method, ['GET', 'HEAD'], true)) {
+        // Google only POSTs here. A GET is a bookmark/typed URL or a proxy
+        // redirect that dropped the POST body; send the user to the start page.
+        error_log('PDF Düzenle: SAML ACS received ' . $method . ' instead of POST; check that Google ACS URL is exactly ' . $config['url'] . '/saml-acs.php');
+        pdf_redirect($base . '/?error=session');
+    }
     $expected = in_array($route, ['acs', 'logout'], true) ? 'POST' : 'GET';
     if ($method !== $expected && !($expected === 'GET' && $method === 'HEAD')) {
         header('Allow: ' . $expected);

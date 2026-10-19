@@ -30,6 +30,8 @@ SAML_IDP_CERT_PATH=./certs/google-workspace.pem
 SAML_SP_ENTITY_ID=https://my.beykoz.edu.tr/pdf/metadata.php
 ```
 
+Her anahtarı `.env` içinde **yalnızca bir kez** yazın. Aynı anahtar iki kez geçerse sonraki satır geçerli olur; örneğin ikinci bir `SAML_IDP_CERT_PATH` satırı, var olan sertifika dosyasının yerine olmayan bir dosyayı gösterebilir ve tüm sayfalar `PDF Düzenle açılamadı` (HTTP 500) hatası verir. PHP hata günlüğü bu durumda eksik dosyanın yolunu yazar.
+
 SSO URL ve issuer örneklerini tahmin ederek kullanmayın; Google ekranındaki değerleri aynen kopyalayın. İndirilen PEM sertifikasını belirtilen dosyaya yerleştirin. Bu, Google'ın **herkese açık sertifikasıdır**; Google özel anahtarı alınmaz.
 
 ```sh
@@ -44,6 +46,8 @@ Kurulumdan sonra SP metadata adresi `https://my.beykoz.edu.tr/pdf/metadata.php` 
 ## Girişi deneme
 
 Tarayıcıdan **https://my.beykoz.edu.tr/pdf/** adresine gidip **Google Workspace ile giriş yap** düğmesine basın. Bu uygulama **SP-initiated SSO** kullanır. Google Admin'deki “Test SAML login” ve uygulama başlatıcısının doğrudan IdP-initiated POST akışı desteklenmez; istekle eşleşmeyen yanıtlar reddedilir. Kullanıcı kısayolu için giriş sayfasının adresini kullanın.
+
+`/pdf/saml-acs.php` adresi tarayıcıda doğrudan açılmak için değildir; Google bu adrese yalnızca POST gönderir. Adres doğrudan açılırsa giriş sayfasına yönlendirilir.
 
 Başarılı girişten sonra `/pdf/app.php` açılır. Başka alan adından bir hesapla erişimin reddedildiğini kontrol edin. Oturumu kapattıktan sonra `/pdf/engine/merge-pdf.php` yeniden giriş sayfasına dönmelidir.
 
