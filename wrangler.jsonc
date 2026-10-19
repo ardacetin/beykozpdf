@@ -17,6 +17,9 @@
   },
   "rules": [{ "type": "Text", "globs": ["**/*.html"], "fallthrough": false }],
   "observability": { "enabled": true },
+  // Keep variables added in the dashboard; without this every deploy removes
+  // them. SAML_IDP_CERT and SESSION_SECRET should still be Secret type.
+  "keep_vars": true,
   // Public values from Google Admin > Apps > Web and mobile apps > PDF Düzenle.
   // SAML_IDP_CERT and SESSION_SECRET are secrets: wrangler secret put <NAME>.
   "vars": {
