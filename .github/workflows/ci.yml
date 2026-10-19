@@ -27,6 +27,12 @@ jobs:
       - run: npm test
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
+      - name: Browser tests against the Cloudflare Worker
+        run: npm run test:e2e
+        env:
+          PDF_TARGET: cloudflare
+          WRANGLER_SEND_METRICS: "false"
+      - run: npx wrangler deploy --dry-run
       - uses: actions/upload-artifact@v4
         with:
           name: pdf-duzenle-php

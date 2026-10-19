@@ -14,7 +14,7 @@ function pdf_config(string $private): array
     if ($env === false) {
         throw new RuntimeException('Configuration missing');
     }
-    $url = rtrim($env['APP_URL'] ?? 'https://my.beykoz.edu.tr/pdf', '/');
+    $url = rtrim($env['APP_URL'] ?? 'https://pdf.beykoz.edu.tr', '/');
     $parts = parse_url($url);
     $testing = getenv('PDF_TESTING') === '1' && PHP_SAPI === 'cli-server';
     if (!$parts || !isset($parts['host']) || isset($parts['query']) || isset($parts['fragment']) ||

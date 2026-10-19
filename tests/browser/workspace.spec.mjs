@@ -2,18 +2,18 @@ import { test, expect } from "@playwright/test";
 import { PDFDocument } from "pdf-lib";
 import { readFileSync } from "node:fs";
 async function signIn(page) {
-  await page.goto("/pdf/");
+  await page.goto("/");
   await page
     .getByRole("link", { name: "Google Workspace ile giriş yap" })
     .click();
   await page.getByRole("button", { name: "Test hesabıyla devam et" }).click();
-  await expect(page).toHaveURL(/\/pdf\/app\.php$/);
+  await expect(page).toHaveURL(/\/app\.php$/);
   await expect(page.locator(".tool-card")).toHaveCount(35);
 }
 test("desktop landing, workspace search, favorites, dialogs and logout", async ({
   page,
 }) => {
-  await page.goto("/pdf/");
+  await page.goto("/");
   await expect(
     page.getByRole("heading", { name: "Hoş geldiniz." }),
   ).toBeVisible();
@@ -91,15 +91,15 @@ test("desktop landing, workspace search, favorites, dialogs and logout", async (
   await expect(page.locator(".tool-card")).toHaveCount(1);
   await page.getByRole("button", { name: "Hesap menüsünü aç" }).click();
   await page.getByRole("button", { name: "Oturumu kapat" }).click();
-  await expect(page).toHaveURL(/\/pdf\/$/);
-  await page.goto("/pdf/engine/merge-pdf.php");
-  await expect(page).toHaveURL(/\/pdf\/$/);
+  await expect(page).toHaveURL(/127\.0\.0\.1:3100\/$/);
+  await page.goto("/engine/merge-pdf.php");
+  await expect(page).toHaveURL(/127\.0\.0\.1:3100\/$/);
 });
 test("mobile views have no horizontal overflow and navigation works", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/pdf/");
+  await page.goto("/");
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth),
   ).toBeLessThanOrEqual(390);
@@ -233,18 +233,18 @@ test("tool controls, help copy and messages are localized in Turkish", async ({
   ];
 
   for (const [tool, translated, english] of cases) {
-    await page.goto(`/pdf/app.php?tool=${tool}`);
+    await page.goto(`/app.php?tool=${tool}`);
     const frame = page.frameLocator("#engine-frame");
     await expect(frame.locator("#tool-uploader")).toContainText(translated);
     await expect(frame.locator("#tool-uploader")).not.toContainText(english);
   }
 
-  await page.goto("/pdf/app.php?tool=ocr-pdf");
+  await page.goto("/app.php?tool=ocr-pdf");
   const ocrFrame = page.frameLocator("#engine-frame");
   await expect(ocrFrame.locator("#lang-list")).toContainText("İngilizce");
   await expect(ocrFrame.locator("#lang-list")).toContainText("Türkçe");
 
-  await page.goto("/pdf/app.php?tool=compress-pdf");
+  await page.goto("/app.php?tool=compress-pdf");
   const compressFrame = page.frameLocator("#engine-frame");
   // The engine applies its locale files asynchronously; a click that lands
   // before they arrive has its alert title reset to the generic "Uyarı".
@@ -284,13 +284,13 @@ test("new tool screens accept real PDF files", async ({ page }) => {
   ];
 
   for (const [tool, readySelector] of cases) {
-    await page.goto(`/pdf/app.php?tool=${tool}`);
+    await page.goto(`/app.php?tool=${tool}`);
     const frame = page.frameLocator("#engine-frame");
     await frame.locator("#file-input").setInputFiles(input);
     await expect(frame.locator(readySelector)).toBeVisible();
   }
 
-  await page.goto("/pdf/app.php?tool=compare-pdfs");
+  await page.goto("/app.php?tool=compare-pdfs");
   const compareFrame = page.frameLocator("#engine-frame");
   await compareFrame.locator("#file-input-1").setInputFiles(input);
   await compareFrame.locator("#file-input-2").setInputFiles(input);

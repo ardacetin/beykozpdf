@@ -8,7 +8,7 @@ const DOCX = Buffer.from(
 );
 
 async function signIn(page) {
-  await page.goto('/pdf/');
+  await page.goto('/');
   await page.getByRole('link', { name: 'Google Workspace ile giriş yap' }).click();
   await page.getByRole('button', { name: 'Test hesabıyla devam et' }).click();
 }
@@ -16,7 +16,7 @@ async function signIn(page) {
 test('Word belgesini tarayıcıda PDF dosyasına dönüştürür', async ({ page }) => {
   test.setTimeout(180_000);
   await signIn(page);
-  await page.goto('/pdf/app.php?tool=word-to-pdf');
+  await page.goto('/app.php?tool=word-to-pdf');
   const frame = page.frameLocator('#engine-frame');
   await frame.locator('#file-input').setInputFiles({
     name: 'beykoz-test.docx',
@@ -44,7 +44,7 @@ test('PDF belgesini tarayıcıda Word dosyasına dönüştürür', async ({ page
   });
 
   await signIn(page);
-  await page.goto('/pdf/app.php?tool=pdf-to-docx');
+  await page.goto('/app.php?tool=pdf-to-docx');
   const frame = page.frameLocator('#engine-frame');
   await frame.locator('#file-input').setInputFiles({
     name: 'beykoz-pdf-test.pdf',
