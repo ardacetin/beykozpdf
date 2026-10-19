@@ -9,12 +9,15 @@ const appUrl = new URL(process.env.APP_URL || 'https://pdf.beykoz.edu.tr');
 const base = appUrl.pathname.replace(/\/$/, '');
 const publicDir = path.join(release, 'htdocs', appUrl.hostname, base);
 const privateDir = path.join(release, 'pdf-duzenle-private');
-if (!existsSync(path.join(root, 'vendor/autoload.php'))) throw new Error('Önce composer install --no-dev çalıştırın.');
+// Cloudflare builds (npm run build:cloudflare) only need the engine tree that
+// package-cloudflare.mjs reads from here: no PHP dependencies or zip archive.
+const phpRelease = process.env.PDF_TARGET !== 'cloudflare';
+if (phpRelease && !existsSync(path.join(root, 'vendor/autoload.php'))) throw new Error('Önce composer install --no-dev çalıştırın.');
 rmSync(release, { recursive: true, force: true });
 mkdirSync(publicDir, { recursive: true });
 mkdirSync(privateDir, { recursive: true });
 cpSync(path.join(root, 'php'), path.join(privateDir, 'php'), { recursive: true });
-cpSync(path.join(root, 'vendor'), path.join(privateDir, 'vendor'), { recursive: true });
+if (phpRelease) cpSync(path.join(root, 'vendor'), path.join(privateDir, 'vendor'), { recursive: true });
 cpSync(path.join(root, 'web'), path.join(privateDir, 'web'), { recursive: true });
 cpSync(path.join(root, '.env.example'), path.join(privateDir, '.env.example'));
 mkdirSync(path.join(privateDir, 'certs'));
@@ -94,7 +97,9 @@ for (const rel of files) {
 for (const name of ['composer.json', 'composer.lock', 'LICENSE', 'LICENSE-AGPL', 'THIRD_PARTY_NOTICES.md'])
   cpSync(path.join(root, name), path.join(privateDir, name));
 cpSync(path.join(root, 'docs/cloudpanel.md'), path.join(release, 'KURULUM.md'));
-const archive = path.join(root, 'dist/pdf-duzenle-php.zip');
-rmSync(archive, { force: true });
-execFileSync('zip', ['-qr', archive, 'htdocs', 'pdf-duzenle-private', 'KURULUM.md'], { cwd: release });
-console.info(`PHP yükleme paketi: ${archive}`);
+if (phpRelease) {
+  const archive = path.join(root, 'dist/pdf-duzenle-php.zip');
+  rmSync(archive, { force: true });
+  execFileSync('zip', ['-qr', archive, 'htdocs', 'pdf-duzenle-private', 'KURULUM.md'], { cwd: release });
+  console.info(`PHP yükleme paketi: ${archive}`);
+}

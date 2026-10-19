@@ -14,7 +14,8 @@
     "test:e2e": "playwright test",
     "install:engine": "npm ci --prefix engine --ignore-scripts",
     "package:cloudflare": "node scripts/package-cloudflare.mjs",
-    "deploy:cloudflare": "wrangler deploy"
+    "deploy:cloudflare": "wrangler deploy",
+    "build:cloudflare": "npm run install:engine && PDF_TARGET=cloudflare node scripts/build.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",
@@ -22,7 +23,7 @@
     "wrangler": "4.151.1"
   },
   "dependencies": {
-    "@xmldom/xmldom": "0.9.8",
+    "@xmldom/xmldom": "0.9.12",
     "xml-crypto": "6.1.2"
   }
 }

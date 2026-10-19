@@ -56,6 +56,19 @@ Google Admin → **Uygulamalar → Web ve mobil uygulamalar → PDF Düzenle** �
 
 Diğer ayrıntılar için [google-workspace.md](google-workspace.md) dosyasına bakın.
 
+## GitHub'dan otomatik yayın (Workers Builds)
+
+Worker panelden bu depoya bağlıysa Cloudflare her commit'te kendisi derler. **Workers → beykozpdf → Settings → Build** altında:
+
+| Ayar | Değer |
+| --- | --- |
+| Build command | `npm run build:cloudflare` |
+| Deploy command | `npx wrangler deploy` |
+| Non-production branch deploy command | `npx wrangler versions upload` |
+| Root directory | boş (depo kökü) |
+
+`build:cloudflare` PDF motorunu derler ve Cloudflare paketini hazırlar; PHP/Composer gerektirmez. `main` dalına gelen her birleştirme siteyi günceller, diğer dallar yalnızca önizleme sürümü yükler. `SAML_IDP_CERT` ve `SESSION_SECRET` yine **Settings → Variables and Secrets** altında (veya `wrangler secret put` ile) bir kez girilir; derleme bunları değiştirmez.
+
 ## Güncelleme
 
 ```sh
@@ -81,7 +94,7 @@ Bir ayar eksik veya hatalıysa sayfalar "Yapım aşamasındayız" bakım ekranı
 npx wrangler tail
 ```
 
-Çıktıda `PDF Düzenle:` ile başlayan satırı arayın (örneğin `SAML_IDP_CERT is empty` veya `SAML authentication rejected; Claims mismatch`). Aynı kayıtlar Cloudflare panelinde **Workers → pdf-duzenle → Logs** altında da görünür.
+Çıktıda `PDF Düzenle:` ile başlayan satırı arayın (örneğin `SAML_IDP_CERT is empty` veya `SAML authentication rejected; Claims mismatch`). Aynı kayıtlar Cloudflare panelinde **Workers → beykozpdf → Logs** altında da görünür.
 
 ## Oturumlar ve acil iptal
 
