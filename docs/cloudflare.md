@@ -67,7 +67,7 @@ Worker panelden bu depoya bağlıysa Cloudflare her commit'te kendisi derler. **
 | Non-production branch deploy command | `npx wrangler versions upload` |
 | Root directory | boş (depo kökü) |
 
-`build:cloudflare` PDF motorunu derler ve Cloudflare paketini hazırlar; PHP/Composer gerektirmez. `main` dalına gelen her birleştirme siteyi günceller, diğer dallar yalnızca önizleme sürümü yükler. `SAML_IDP_CERT` ve `SESSION_SECRET` yine **Settings → Variables and Secrets** altında (veya `wrangler secret put` ile) bir kez girilir; derleme bunları değiştirmez.
+`build:cloudflare` PDF motorunu derler ve Cloudflare paketini hazırlar; PHP/Composer gerektirmez. `main` dalına gelen her birleştirme siteyi günceller, diğer dallar yalnızca önizleme sürümü yükler. `SAML_IDP_CERT` ve `SESSION_SECRET`, **Settings → Runtime variables and secrets** altında **Secret** türünde (veya `wrangler secret put` ile) bir kez girilir. *Builds → Variables and secrets* bölümüne girilen değerleri çalışan Worker görmez.
 
 ## Güncelleme
 
