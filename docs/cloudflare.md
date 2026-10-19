@@ -81,7 +81,7 @@ Bir ayar eksik veya hatalıysa sayfalar "Yapım aşamasındayız" bakım ekranı
 npx wrangler tail
 ```
 
-Çıktıda `PDF Düzenle:` ile başlayan satırı arayın (örneğin `SAML_IDP_CERT is empty` veya `SAML authentication rejected; Claims mismatch`). Aynı kayıtlar Cloudflare panelinde **Workers → pdf-duzenle → Logs** altında da görünür.
+Çıktıda `PDF Düzenle:` ile başlayan satırı arayın (örneğin `SAML_IDP_CERT is empty` veya `SAML authentication rejected; Claims mismatch`). Aynı kayıtlar Cloudflare panelinde **Workers → beykozpdf → Logs** altında da görünür.
 
 ## Oturumlar ve acil iptal
 

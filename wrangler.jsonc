@@ -2,7 +2,7 @@
 // Build first (npm run build); it fills dist/cloudflare/assets.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "pdf-duzenle",
+  "name": "beykozpdf",
   "main": "cloudflare/worker.mjs",
   "compatibility_date": "2025-09-01",
   "compatibility_flags": ["nodejs_compat"],
